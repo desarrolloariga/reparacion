@@ -1,0 +1,51 @@
+{
+  "name": "arigajoyeria",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build",
+    "start": "next start -p 3003",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:check": "node --env-file=.env.local scripts/verificar-supabase.mjs",
+    "db:bundle": "node scripts/empaquetar-migraciones.mjs",
+    "db:new": "supabase migration new",
+    "db:push": "node --env-file=.env.local scripts/supabase-cli.mjs db push",
+    "db:pull": "node --env-file=.env.local scripts/supabase-cli.mjs db pull --schema joyeria",
+    "db:types": "node --env-file=.env.local scripts/generar-tipos.mjs",
+    "db:sql": "node --env-file=.env.local scripts/sql.mjs",
+    "usuarios:crear": "node --env-file=.env.local scripts/crear-usuario.mjs",
+    "test:fase1": "node --env-file=.env.local scripts/probar-fase-1.mjs",
+    "test:humo": "node --env-file=.env.local scripts/humo.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.31.0",
+    "next": "16.3.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^24.19.1",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.8",
+    "pg": "^8.23.1",
+    "supabase": "^2.114.0",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.0.3"
+  }
+}
