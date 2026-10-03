@@ -21,6 +21,7 @@
     "usuarios:crear": "node --env-file=.env.local scripts/crear-usuario.mjs",
     "test:fase1": "node --env-file=.env.local scripts/probar-fase-1.mjs",
     "test:fase2": "node --env-file=.env.local scripts/probar-fase-2.mjs",
+    "test:fase3": "node --env-file=.env.local scripts/probar-fase-3.mjs",
     "test:humo": "node --env-file=.env.local scripts/humo.mjs",
     "storage:preparar": "node --env-file=.env.local scripts/preparar-storage.mjs"
   },

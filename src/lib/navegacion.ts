@@ -58,7 +58,16 @@ export const NAVEGACION: GrupoNav[] = [
         destacado: true,
         soloRoles: ["admin", "taller"],
       },
+      { nombre: "Alertas", href: "/panel/alertas", titulo: "Vencidas y por vencer", icono: "alertas", destacado: true },
+      { nombre: "Tablero", href: "/panel/tablero", titulo: "Tablero del taller", icono: "tablero" },
       { nombre: "Clientes", href: "/panel/clientes", icono: "clientes" },
+    ],
+  },
+  {
+    etiqueta: "MIS TRABAJOS",
+    soloRoles: ["joyero"],
+    items: [
+      { nombre: "Mis trabajos", href: "/panel/mis-trabajos", icono: "trabajos", destacado: true },
     ],
   },
   {
@@ -91,6 +100,7 @@ export const NAVEGACION: GrupoNav[] = [
     etiqueta: "MI CUENTA",
     soloRoles: TODOS,
     items: [
+      { nombre: "Notificaciones", href: "/panel/notificaciones" },
       { nombre: "Mi contraseña", href: "/panel/cuenta", titulo: "Cambiar contraseña" },
     ],
   },

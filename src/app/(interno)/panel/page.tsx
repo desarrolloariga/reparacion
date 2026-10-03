@@ -2,93 +2,101 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { ChipEstadoOrden } from "@/components/ordenes/chip-estado";
+import { Semaforo } from "@/components/ordenes/semaforo";
 import { Boton } from "@/components/ui/boton";
 import { Tarjeta, TarjetaEncabezado, TarjetaIndicador } from "@/components/ui/tarjeta";
 import { Vacio } from "@/components/ui/vacio";
 import { requerirSesion } from "@/lib/auth/guardas";
+import { alertasActivas } from "@/lib/datos/alertas";
 import { calendarioVigente, listarExcepciones, proximoDiaNoHabil } from "@/lib/datos/calendario";
-import { combinacionesSinTiempo, listarTiposTrabajo } from "@/lib/datos/catalogos";
-import { listarJoyeros } from "@/lib/datos/joyeros";
-import { leerParametros } from "@/lib/datos/parametros";
+import { combinacionesSinTiempo } from "@/lib/datos/catalogos";
+import { contarPorEstado, listarOrdenes } from "@/lib/datos/ordenes";
+import { evaluarSemaforos } from "@/lib/datos/semaforo";
 import { fecha } from "@/lib/format";
-import { hoyISO, NOMBRE_DIA_SEMANA } from "@/lib/reparaciones/dias-habiles";
+import { hoyISO } from "@/lib/reparaciones/dias-habiles";
+import { ESTADOS_KANBAN, ETIQUETA_CORTA_ESTADO } from "@/lib/reparaciones/estados";
 
 export const metadata: Metadata = { title: "Inicio" };
 
-/**
- * Resumen de arranque. En esta fase muestra el estado de la parametrización
- * del taller; las órdenes y alertas llegan en las fases siguientes.
- */
+/** Resumen del día: alertas, órdenes por estado y lo último recibido. */
 export default async function PaginaPanel() {
   const sesion = await requerirSesion();
   if (sesion.rol === "joyero") redirect("/panel/mis-trabajos");
 
-  const [joyeros, tipos, faltantes, parametros, calendario, excepciones] = await Promise.all([
-    listarJoyeros(true),
-    listarTiposTrabajo({ soloActivos: true }),
-    combinacionesSinTiempo(),
-    leerParametros(),
+  const [alertas, conteo, recientes, faltantes, calendario, excepciones] = await Promise.all([
+    alertasActivas(),
+    contarPorEstado(),
+    listarOrdenes({ estado: "activas", pagina: 1, porPagina: 8 }),
+    sesion.rol === "admin" ? combinacionesSinTiempo() : Promise.resolve([]),
     calendarioVigente(),
     listarExcepciones(),
   ]);
-
-  const hoy = hoyISO();
-  const noHabil = await proximoDiaNoHabil(hoy, calendario, excepciones);
-  const diasSemana = parametros.dias_semana_habiles.map((d) => NOMBRE_DIA_SEMANA[d].slice(0, 3)).join(" · ");
+  const semaforos = await evaluarSemaforos(recientes.filas);
+  const noHabil = await proximoDiaNoHabil(hoyISO(), calendario, excepciones);
+  const vencidas = alertas.joyero.vencidas.length + alertas.cliente.vencidas.length;
+  const porVencer = alertas.joyero.porVencer.length + alertas.cliente.porVencer.length;
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <TarjetaIndicador etiqueta="JOYEROS ACTIVOS" valor={joyeros.length} nota="en el taller" />
-        <TarjetaIndicador etiqueta="TIPOS DE TRABAJO" valor={tipos.length} nota="activos en catálogo" />
-        <TarjetaIndicador
-          etiqueta="MATRIZ DE TIEMPOS"
-          valor={faltantes.length === 0 ? "Completa" : faltantes.length}
-          nota={faltantes.length === 0 ? "todas las combinaciones definidas" : "combinaciones sin tiempo"}
-        />
-        <TarjetaIndicador
-          etiqueta="PRÓXIMO DÍA NO HÁBIL"
-          valor={noHabil ? fecha(noHabil.fecha) : "—"}
-          nota={noHabil?.motivo}
-        />
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <TarjetaIndicador etiqueta="ÓRDENES ACTIVAS" valor={alertas.activas} nota={`${conteo.entregada ?? 0} entregadas en total`} />
+        <TarjetaIndicador etiqueta="VENCIDAS" valor={vencidas} nota={vencidas > 0 ? `${alertas.joyero.vencidas.length} del joyero · ${alertas.cliente.vencidas.length} frente al cliente` : "ninguna"} />
+        <TarjetaIndicador etiqueta="POR VENCER" valor={porVencer} nota="dentro del umbral de alerta" />
+        <TarjetaIndicador etiqueta="PRÓXIMO DÍA NO HÁBIL" valor={noHabil ? fecha(noHabil.fecha + "T12:00:00") : "—"} nota={noHabil?.motivo} />
       </div>
 
-      {faltantes.length > 0 && sesion.rol === "admin" ? (
-        <Tarjeta className="border-gold/40 bg-gold/6 flex flex-wrap items-center justify-between gap-4 px-[22px] py-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-gold-deep text-[13px] font-medium">
-              Faltan {faltantes.length} combinaciones en la matriz de tiempos estándar.
-            </span>
-            <span className="text-ink/55 text-[12px]">
-              Sin ellas, la recepción de una pieza con ese trabajo y complejidad se bloquea.
-            </span>
-          </div>
-          <Link href="/panel/catalogos/tiempos">
-            <Boton tamano="sm">COMPLETAR MATRIZ</Boton>
-          </Link>
+      {vencidas + porVencer > 0 ? (
+        <Tarjeta className="border-clay/30 bg-clay/4 flex flex-wrap items-center justify-between gap-4 px-[22px] py-4">
+          <span className="text-[13px]"><strong>{vencidas}</strong> vencidas y <strong>{porVencer}</strong> por vencer. Empieza el día por ahí.</span>
+          <Link href="/panel/alertas"><Boton tamano="sm">VER ALERTAS</Boton></Link>
         </Tarjeta>
       ) : null}
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <Tarjeta>
-          <TarjetaEncabezado titulo="Calendario laboral" />
-          <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 px-[22px] py-[18px] text-[13px]">
-            <dt className="text-ink/45">Días hábiles</dt>
-            <dd className="m-0">{diasSemana}</dd>
-            <dt className="text-ink/45">Holgura al cliente</dt>
-            <dd className="m-0">{parametros.holgura_cliente_dias} días hábiles</dd>
-            <dt className="text-ink/45">Holgura del joyero</dt>
-            <dd className="m-0">{parametros.holgura_joyero_dias} días hábiles</dd>
-            <dt className="text-ink/45">Excepciones registradas</dt>
-            <dd className="m-0">{excepciones.length}</dd>
-          </dl>
+      {faltantes.length > 0 ? (
+        <Tarjeta className="border-gold/40 bg-gold/6 flex flex-wrap items-center justify-between gap-4 px-[22px] py-4">
+          <span className="text-[13px]">Faltan <strong>{faltantes.length}</strong> combinaciones en la matriz de tiempos estándar: la recepción con esos trabajos se bloquea.</span>
+          <Link href="/panel/catalogos/tiempos"><Boton tamano="sm" variante="contorno">COMPLETAR MATRIZ</Boton></Link>
+        </Tarjeta>
+      ) : null}
+
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <Tarjeta className="overflow-hidden">
+          <TarjetaEncabezado titulo="Últimas órdenes activas">
+            <Link href="/panel/ordenes" className="text-ink/45 hover:text-gold-dark text-[12px]">Ver todas</Link>
+          </TarjetaEncabezado>
+          {recientes.filas.length === 0 ? (
+            <Vacio titulo="Sin órdenes activas" descripcion="Recibe una pieza para abrir la primera." accion={sesion.rol !== "gerencia" ? <Link href="/panel/ordenes/nueva"><Boton>RECIBIR PIEZA</Boton></Link> : undefined} className="py-10" />
+          ) : (
+            <ul className="m-0 list-none divide-y divide-ink/6 p-0">
+              {recientes.filas.map((o) => (
+                <li key={o.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3">
+                  <span className="flex min-w-0 flex-col">
+                    <Link href={`/panel/ordenes/${o.id}`} className="hover:text-gold-dark font-mono text-[12px] font-medium">{o.numero}</Link>
+                    <span className="truncate text-[12.5px]">{o.descripcion_pieza} · <span className="text-ink/55">{o.cliente}</span></span>
+                  </span>
+                  <span className="flex items-center gap-3">
+                    <ChipEstadoOrden estado={o.estado} corto />
+                    <Semaforo evaluacion={semaforos.get(o.id)} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Tarjeta>
 
-        <Tarjeta>
-          <Vacio
-            titulo="Las órdenes llegan en la Fase 2"
-            descripcion="Recepción de piezas, cotizaciones, asignación a joyeros, alertas y liquidaciones se construyen sobre esta base: joyeros, catálogos, tiempos y calendario."
-          />
+        <Tarjeta className="overflow-hidden">
+          <TarjetaEncabezado titulo="Por estado">
+            <Link href="/panel/tablero" className="text-ink/45 hover:text-gold-dark text-[12px]">Tablero</Link>
+          </TarjetaEncabezado>
+          <ul className="m-0 list-none divide-y divide-ink/6 p-0">
+            {ESTADOS_KANBAN.map((e) => (
+              <li key={e} className="flex items-center justify-between px-5 py-2 text-[12.5px]">
+                <Link href={`/panel/ordenes?estado=${e}`} className="hover:text-gold-dark">{ETIQUETA_CORTA_ESTADO[e]}</Link>
+                <span className="font-medium tabular-nums">{conteo[e] ?? 0}</span>
+              </li>
+            ))}
+          </ul>
         </Tarjeta>
       </div>
     </>

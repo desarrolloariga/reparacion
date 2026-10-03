@@ -41,13 +41,14 @@ El proyecto de Supabase es compartido con el ERP (`public`) y Smart Vale (`smart
 | `npm run check` | TypeScript + ESLint |
 | `npm run test:fase1` | Contra la base real: semillas, restricciones, hash de contraseñas (limpia lo que crea) |
 | `npm run test:fase2` | Contra la base real: numeración, máquina de estados, cotizaciones versionadas y aprobación (limpia lo que crea) |
+| `npm run test:fase3` | Contra la base real: asignación, portal del joyero, calidad y retrabajo, entrega, garantía, desempeño (limpia lo que crea) |
 | `npm run test:humo` | Con el servidor corriendo: cada página por rol, códigos HTTP y redirecciones |
 
 ## Vercel
 
 1. Importar el repositorio de GitHub (framework Next.js, se detecta solo).
-2. Variables de entorno (Production y Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (marcar **Sensitive**), `NEXT_PUBLIC_SITE_URL` (dominio real), `CRON_SECRET` (largo y aleatorio; Vercel Cron lo manda en `Authorization: Bearer …`), `SUPABASE_STORAGE_BUCKET=reparaciones`. La Fase 3 añade las del proveedor de correo.
-3. Los jobs programados están en `vercel.json` (`crons`): vencimiento diario de cotizaciones y limpieza semanal de fotos temporales.
+2. Variables de entorno (Production y Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (marcar **Sensitive**), `NEXT_PUBLIC_SITE_URL` (dominio real), `CRON_SECRET` (largo y aleatorio; Vercel Cron lo manda en `Authorization: Bearer …`), `SUPABASE_STORAGE_BUCKET=reparaciones`. Correo (opcional): `RESEND_API_KEY` y `CORREO_REMITENTE` activan el envío real por Resend; sin ellas, los correos se registran en la cola y se marcan enviados en consola.
+3. Los jobs programados están en `vercel.json` (`crons`): vencimiento diario de cotizaciones, resumen diario de alertas (07:00 Guatemala), envío de correos pendientes cada hora y limpieza semanal de fotos temporales. En plan Hobby de Vercel, reducir los crons a diarios.
 4. Cada push a `main` despliega a producción; cada rama/PR crea un preview.
 
 ## Estructura
@@ -58,7 +59,8 @@ src/
     login/                     acceso
     (interno)/panel/           todo lo que exige sesión (layout con requerirSesion)
       ordenes/ (lista, nueva recepción, ficha con pestañas, cotizador)  clientes/
-      joyeros/  catalogos/  usuarios/  cuenta/  mis-trabajos/
+      alertas/  tablero/ (kanban)  notificaciones/  mis-trabajos/ (portal del joyero)
+      joyeros/ (con desempeño)  catalogos/  usuarios/  cuenta/
     api/                       archivos (subida y lectura firmada), PDF de recepción y cotización, cron
     globals.css                tokens de la marca (@theme de Tailwind v4)
   components/
@@ -68,7 +70,8 @@ src/
     auth/                      sesiones, guardas, contraseñas
     acciones/                  Server Actions ("use server"), una guarda al inicio de cada una
     datos/                     lecturas (server-only), una función por consulta
-    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros, estados, tiempos, cotizaciones
+    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros, estados, tiempos, cotizaciones, asignación
+    notificaciones/            en plataforma + cola de correo con adaptador (consola / Resend)
     pdf/                       documentos con @react-pdf/renderer
     storage.ts                 bucket privado: rutas, subida, URL firmada
     supabase/                  cliente de servidor, esquema, tipos generados, alias (modelo.ts)

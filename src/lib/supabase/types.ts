@@ -5,7 +5,44 @@ export type Database = {
   
   "joyeria": {
           Tables: {
-            "calendario_laboral": {
+            "asignaciones": {
+                  Row: {
+                    "actualizado_en": string | null,"costo_pactado": number,"creado_en": string,"creado_por": number | null,"desviacion_dias": number | null,"dias_reales": number | null,"es_retrabajo": boolean,"estado": Database["joyeria"]['Enums']["estado_asignacion"],"excede_fecha_cliente": boolean,"fecha_asignacion": string,"fecha_compromiso": string,"fecha_inicio_real": string | null,"fecha_terminado_real": string | null,"id": number,"instrucciones": string | null,"joyero_id": number,"notas_joyero": string | null,"orden_id": number,"pagada": boolean
+                  }
+                  Insert: {
+                    "actualizado_en"?: string | null,"costo_pactado": number,"creado_en"?: string,"creado_por"?: number | null,"desviacion_dias"?: number | null,"dias_reales"?: number | null,"es_retrabajo"?: boolean,"estado"?: Database["joyeria"]['Enums']["estado_asignacion"],"excede_fecha_cliente"?: boolean,"fecha_asignacion"?: string,"fecha_compromiso": string,"fecha_inicio_real"?: string | null,"fecha_terminado_real"?: string | null,"id"?: never,"instrucciones"?: string | null,"joyero_id": number,"notas_joyero"?: string | null,"orden_id": number,"pagada"?: boolean
+                  }
+                  Update: {
+                    "actualizado_en"?: string | null,"costo_pactado"?: number,"creado_en"?: string,"creado_por"?: number | null,"desviacion_dias"?: number | null,"dias_reales"?: number | null,"es_retrabajo"?: boolean,"estado"?: Database["joyeria"]['Enums']["estado_asignacion"],"excede_fecha_cliente"?: boolean,"fecha_asignacion"?: string,"fecha_compromiso"?: string,"fecha_inicio_real"?: string | null,"fecha_terminado_real"?: string | null,"id"?: never,"instrucciones"?: string | null,"joyero_id"?: number,"notas_joyero"?: string | null,"orden_id"?: number,"pagada"?: boolean
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "asignaciones_creado_por_fkey"
+      columns: ["creado_por"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_joyero_id_fkey"
+      columns: ["joyero_id"]
+isOneToOne: false
+      referencedRelation: "joyeros"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"calendario_laboral": {
                   Row: {
                     "actualizado_en": string | null,"creado_en": string,"creado_por": number | null,"descripcion": string | null,"es_habil": boolean,"fecha": string,"id": number
                   }
@@ -56,6 +93,55 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"control_calidad": {
+                  Row: {
+                    "asignacion_id": number | null,"creado_en": string,"id": number,"observaciones": string | null,"orden_id": number,"resultado": Database["joyeria"]['Enums']["resultado_calidad"],"revisado_por": number | null
+                  }
+                  Insert: {
+                    "asignacion_id"?: number | null,"creado_en"?: string,"id"?: never,"observaciones"?: string | null,"orden_id": number,"resultado": Database["joyeria"]['Enums']["resultado_calidad"],"revisado_por"?: number | null
+                  }
+                  Update: {
+                    "asignacion_id"?: number | null,"creado_en"?: string,"id"?: never,"observaciones"?: string | null,"orden_id"?: number,"resultado"?: Database["joyeria"]['Enums']["resultado_calidad"],"revisado_por"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "control_calidad_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "asignaciones"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "control_calidad_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["asignacion_id"]
+    },{
+      foreignKeyName: "control_calidad_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "vw_trabajos_joyero"
+      referencedColumns: ["asignacion_id"]
+    },{
+      foreignKeyName: "control_calidad_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "control_calidad_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "control_calidad_revisado_por_fkey"
+      columns: ["revisado_por"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"correlativos": {
                   Row: {
                     "anio": number,"prefijo": string,"ultimo": number
@@ -65,6 +151,19 @@ isOneToOne: false
                   }
                   Update: {
                     "anio"?: number,"prefijo"?: string,"ultimo"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"correos_salientes": {
+                  Row: {
+                    "asunto": string,"creado_en": string,"cuerpo_html": string,"enviado_en": string | null,"error": string | null,"estado": string,"id": number,"intentos": number,"para": string
+                  }
+                  Insert: {
+                    "asunto": string,"creado_en"?: string,"cuerpo_html": string,"enviado_en"?: string | null,"error"?: string | null,"estado"?: string,"id"?: never,"intentos"?: number,"para": string
+                  }
+                  Update: {
+                    "asunto"?: string,"creado_en"?: string,"cuerpo_html"?: string,"enviado_en"?: string | null,"error"?: string | null,"estado"?: string,"id"?: never,"intentos"?: number,"para"?: string
                   }
                   Relationships: [
                     
@@ -256,6 +355,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"notificaciones": {
+                  Row: {
+                    "creado_en": string,"cuerpo": string | null,"enlace": string | null,"id": number,"leida_en": string | null,"tipo": string,"titulo": string,"usuario_id": number
+                  }
+                  Insert: {
+                    "creado_en"?: string,"cuerpo"?: string | null,"enlace"?: string | null,"id"?: never,"leida_en"?: string | null,"tipo": string,"titulo": string,"usuario_id": number
+                  }
+                  Update: {
+                    "creado_en"?: string,"cuerpo"?: string | null,"enlace"?: string | null,"id"?: never,"leida_en"?: string | null,"tipo"?: string,"titulo"?: string,"usuario_id"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notificaciones_usuario_id_fkey"
+      columns: ["usuario_id"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"orden_detalle": {
                   Row: {
                     "cantidad": number,"complejidad_id": number,"costo_joyero_estimado": number,"creado_en": string,"descripcion": string | null,"dias_estimados": number,"id": number,"orden": number,"orden_id": number,"precio_cliente": number,"tipo_trabajo_id": number
@@ -364,6 +482,37 @@ isOneToOne: false
       columns: ["orden_origen_id"]
 isOneToOne: false
       referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"pagos_cliente": {
+                  Row: {
+                    "creado_en": string,"fecha": string,"forma_pago": Database["joyeria"]['Enums']["forma_pago"],"id": number,"monto": number,"orden_id": number,"referencia": string | null,"registrado_por": number | null,"tipo": Database["joyeria"]['Enums']["tipo_pago"]
+                  }
+                  Insert: {
+                    "creado_en"?: string,"fecha"?: string,"forma_pago": Database["joyeria"]['Enums']["forma_pago"],"id"?: never,"monto": number,"orden_id": number,"referencia"?: string | null,"registrado_por"?: number | null,"tipo": Database["joyeria"]['Enums']["tipo_pago"]
+                  }
+                  Update: {
+                    "creado_en"?: string,"fecha"?: string,"forma_pago"?: Database["joyeria"]['Enums']["forma_pago"],"id"?: never,"monto"?: number,"orden_id"?: number,"referencia"?: string | null,"registrado_por"?: number | null,"tipo"?: Database["joyeria"]['Enums']["tipo_pago"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "pagos_cliente_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pagos_cliente_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pagos_cliente_registrado_por_fkey"
+      columns: ["registrado_por"]
+isOneToOne: false
+      referencedRelation: "usuarios"
       referencedColumns: ["id"]
     }
                   ]
@@ -517,10 +666,16 @@ isOneToOne: false
           Views: {
             "vw_ordenes_tablero": {
                   Row: {
-                    "actualizado_en": string | null,"cliente": string | null,"cliente_id": number | null,"cliente_telefono": string | null,"cotizacion_estado": Database["joyeria"]['Enums']["estado_cotizacion"] | null,"cotizacion_valido_hasta": string | null,"cotizacion_version": number | null,"creado_en": string | null,"creado_por": number | null,"descripcion_pieza": string | null,"dias_estimados": number | null,"es_garantia": boolean | null,"estado": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_compromiso_joyero": string | null,"fecha_control": string | null,"fecha_entrega_real": string | null,"fecha_estimada_entrega": string | null,"fecha_prometida_cliente": string | null,"fecha_prometida_manual": boolean | null,"fecha_recepcion": string | null,"fotografias": number | null,"id": number | null,"joyero": string | null,"joyero_id": number | null,"lineas": number | null,"material": string | null,"numero": string | null,"orden_origen_id": number | null,"precio_cliente": number | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"trabajos": string | null
+                    "actualizado_en": string | null,"asignacion_estado": Database["joyeria"]['Enums']["estado_asignacion"] | null,"asignacion_id": number | null,"cliente": string | null,"cliente_id": number | null,"cliente_telefono": string | null,"cobrado": number | null,"cotizacion_estado": Database["joyeria"]['Enums']["estado_cotizacion"] | null,"cotizacion_valido_hasta": string | null,"cotizacion_version": number | null,"creado_en": string | null,"creado_por": number | null,"descripcion_pieza": string | null,"dias_estimados": number | null,"es_garantia": boolean | null,"es_retrabajo": boolean | null,"estado": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_compromiso_joyero": string | null,"fecha_control": string | null,"fecha_entrega_real": string | null,"fecha_estimada_entrega": string | null,"fecha_prometida_cliente": string | null,"fecha_prometida_manual": boolean | null,"fecha_recepcion": string | null,"fotografias": number | null,"id": number | null,"joyero": string | null,"joyero_id": number | null,"lineas": number | null,"material": string | null,"numero": string | null,"orden_origen_id": number | null,"precio_cliente": number | null,"saldo": number | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"trabajos": string | null
                   }
                   Relationships: [
                     {
+      foreignKeyName: "asignaciones_joyero_id_fkey"
+      columns: ["joyero_id"]
+isOneToOne: false
+      referencedRelation: "joyeros"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "ordenes_cliente_id_fkey"
       columns: ["cliente_id"]
 isOneToOne: false
@@ -546,12 +701,74 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"vw_trabajos_joyero": {
+                  Row: {
+                    "asignacion_id": number | null,"creado_en": string | null,"descripcion_pieza": string | null,"dias_estimados": number | null,"es_retrabajo": boolean | null,"estado_asignacion": Database["joyeria"]['Enums']["estado_asignacion"] | null,"estado_orden": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_asignacion": string | null,"fecha_compromiso": string | null,"fecha_inicio_real": string | null,"fecha_terminado_real": string | null,"fotos_entrada": number | null,"instrucciones": string | null,"joyero_id": number | null,"material": string | null,"notas_joyero": string | null,"numero": string | null,"orden_id": number | null,"piedras": string | null,"quilataje": string | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"trabajos": string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "asignaciones_joyero_id_fkey"
+      columns: ["joyero_id"]
+isOneToOne: false
+      referencedRelation: "joyeros"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Functions: {
             "fn_anotar_orden":
 { Args: { "p_comentario": string,"p_orden_id": number,"p_usuario_id": number }; Returns: undefined
                            },
+"fn_anular_asignacion":
+{ Args: { "p_asignacion_id": number,"p_motivo": string,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"cliente_id": number,
+"cobra_garantia": boolean,
+"creado_en": string,
+"creado_por": number | null,
+"descripcion_pieza": string,
+"dias_estimados": number | null,
+"entregada_con_saldo": boolean,
+"es_garantia": boolean,
+"estado": Database["joyeria"]['Enums']["estado_orden"],
+"fecha_entrega_real": string | null,
+"fecha_estimada_entrega": string | null,
+"fecha_prometida_cliente": string | null,
+"fecha_prometida_manual": boolean,
+"fecha_recepcion": string,
+"id": number,
+"joyero_responsable_garantia_id": number | null,
+"material": string | null,
+"motivo_anulacion": string | null,
+"numero": string,
+"observaciones_recepcion": string | null,
+"orden_origen_id": number | null,
+"peso_entrada_g": number | null,
+"peso_salida_g": number | null,
+"piedras": string | null,
+"precio_cliente": number,
+"quilataje": string | null,
+"tipo": Database["joyeria"]['Enums']["categoria_trabajo"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_aprobar_cotizacion":
 { Args: { "p_aprobada_por_nombre": string,"p_cotizacion_id": number,"p_dias_estimados": number,"p_fecha_estimada": string,"p_fecha_prometida": string,"p_lineas": Json,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -586,6 +803,34 @@ isOneToOne: false
                           SetofOptions: {
         from: "*"
         to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"fn_asignar_joyero":
+{ Args: { "p_comentario"?: string,"p_costo": number,"p_excede": boolean,"p_fecha_compromiso": string,"p_instrucciones": string,"p_joyero_id": number,"p_orden_id": number,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"costo_pactado": number,
+"creado_en": string,
+"creado_por": number | null,
+"desviacion_dias": number | null,
+"dias_reales": number | null,
+"es_retrabajo": boolean,
+"estado": Database["joyeria"]['Enums']["estado_asignacion"],
+"excede_fecha_cliente": boolean,
+"fecha_asignacion": string,
+"fecha_compromiso": string,
+"fecha_inicio_real": string | null,
+"fecha_terminado_real": string | null,
+"id": number,
+"instrucciones": string | null,
+"joyero_id": number,
+"notas_joyero": string | null,
+"orden_id": number,
+"pagada": boolean
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "asignaciones"
         isOneToOne: true
         isSetofReturn: false
       } },
@@ -626,8 +871,92 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_carga_joyeros":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "a_tiempo": number,"activas": number,"joyero_id": number,"retrabajos": number,"terminadas": number
+            }[]
+                           },
+"fn_crear_garantia":
+{ Args: { "p_cobra": boolean,"p_descripcion_pieza": string,"p_dias_estimados": number,"p_fecha_estimada": string,"p_fecha_prometida": string,"p_joyero_responsable_id": number,"p_lineas": Json,"p_observaciones": string,"p_orden_origen_id": number,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"cliente_id": number,
+"cobra_garantia": boolean,
+"creado_en": string,
+"creado_por": number | null,
+"descripcion_pieza": string,
+"dias_estimados": number | null,
+"entregada_con_saldo": boolean,
+"es_garantia": boolean,
+"estado": Database["joyeria"]['Enums']["estado_orden"],
+"fecha_entrega_real": string | null,
+"fecha_estimada_entrega": string | null,
+"fecha_prometida_cliente": string | null,
+"fecha_prometida_manual": boolean,
+"fecha_recepcion": string,
+"id": number,
+"joyero_responsable_garantia_id": number | null,
+"material": string | null,
+"motivo_anulacion": string | null,
+"numero": string,
+"observaciones_recepcion": string | null,
+"orden_origen_id": number | null,
+"peso_entrada_g": number | null,
+"peso_salida_g": number | null,
+"piedras": string | null,
+"precio_cliente": number,
+"quilataje": string | null,
+"tipo": Database["joyeria"]['Enums']["categoria_trabajo"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_crear_orden":
 { Args: { "p_cliente_id": number,"p_dias_estimados": number,"p_fecha_estimada": string,"p_fecha_prometida": string,"p_fecha_prometida_manual": boolean,"p_lineas": Json,"p_pieza": Json,"p_tipo": Database["joyeria"]['Enums']["categoria_trabajo"],"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"cliente_id": number,
+"cobra_garantia": boolean,
+"creado_en": string,
+"creado_por": number | null,
+"descripcion_pieza": string,
+"dias_estimados": number | null,
+"entregada_con_saldo": boolean,
+"es_garantia": boolean,
+"estado": Database["joyeria"]['Enums']["estado_orden"],
+"fecha_entrega_real": string | null,
+"fecha_estimada_entrega": string | null,
+"fecha_prometida_cliente": string | null,
+"fecha_prometida_manual": boolean,
+"fecha_recepcion": string,
+"id": number,
+"joyero_responsable_garantia_id": number | null,
+"material": string | null,
+"motivo_anulacion": string | null,
+"numero": string,
+"observaciones_recepcion": string | null,
+"orden_origen_id": number | null,
+"peso_entrada_g": number | null,
+"peso_salida_g": number | null,
+"piedras": string | null,
+"precio_cliente": number,
+"quilataje": string | null,
+"tipo": Database["joyeria"]['Enums']["categoria_trabajo"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"fn_desempeno_joyeros":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "activo": boolean,"asignados": number,"atrasados": number,"costo_total": number,"cumplimiento_pct": number,"dias_promedio_respuesta": number,"en_proceso": number,"joyero": string,"joyero_id": number,"pendiente_pago": number,"retrabajo_pct": number,"terminados": number
+            }[]
+                           },
+"fn_entregar_orden":
+{ Args: { "p_comentario"?: string,"p_con_saldo": boolean,"p_orden_id": number,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
 "cliente_id": number,
 "cobra_garantia": boolean,
@@ -715,6 +1044,34 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_iniciar_trabajo":
+{ Args: { "p_asignacion_id": number,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"costo_pactado": number,
+"creado_en": string,
+"creado_por": number | null,
+"desviacion_dias": number | null,
+"dias_reales": number | null,
+"es_retrabajo": boolean,
+"estado": Database["joyeria"]['Enums']["estado_asignacion"],
+"excede_fecha_cliente": boolean,
+"fecha_asignacion": string,
+"fecha_compromiso": string,
+"fecha_inicio_real": string | null,
+"fecha_terminado_real": string | null,
+"id": number,
+"instrucciones": string | null,
+"joyero_id": number,
+"notas_joyero": string | null,
+"orden_id": number,
+"pagada": boolean
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "asignaciones"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_nueva_version_cotizacion":
 { Args: { "p_orden_id": number,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -784,15 +1141,80 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_registrar_calidad":
+{ Args: { "p_fecha_compromiso_retrabajo"?: string,"p_observaciones": string,"p_orden_id": number,"p_resultado": Database["joyeria"]['Enums']["resultado_calidad"],"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"cliente_id": number,
+"cobra_garantia": boolean,
+"creado_en": string,
+"creado_por": number | null,
+"descripcion_pieza": string,
+"dias_estimados": number | null,
+"entregada_con_saldo": boolean,
+"es_garantia": boolean,
+"estado": Database["joyeria"]['Enums']["estado_orden"],
+"fecha_entrega_real": string | null,
+"fecha_estimada_entrega": string | null,
+"fecha_prometida_cliente": string | null,
+"fecha_prometida_manual": boolean,
+"fecha_recepcion": string,
+"id": number,
+"joyero_responsable_garantia_id": number | null,
+"material": string | null,
+"motivo_anulacion": string | null,
+"numero": string,
+"observaciones_recepcion": string | null,
+"orden_origen_id": number | null,
+"peso_entrada_g": number | null,
+"peso_salida_g": number | null,
+"piedras": string | null,
+"precio_cliente": number,
+"quilataje": string | null,
+"tipo": Database["joyeria"]['Enums']["categoria_trabajo"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_siguiente_numero":
 { Args: { "p_prefijo": string }; Returns: string
                            },
+"fn_terminar_trabajo":
+{ Args: { "p_asignacion_id": number,"p_desviacion_dias": number,"p_dias_reales": number,"p_notas": string,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"costo_pactado": number,
+"creado_en": string,
+"creado_por": number | null,
+"desviacion_dias": number | null,
+"dias_reales": number | null,
+"es_retrabajo": boolean,
+"estado": Database["joyeria"]['Enums']["estado_asignacion"],
+"excede_fecha_cliente": boolean,
+"fecha_asignacion": string,
+"fecha_compromiso": string,
+"fecha_inicio_real": string | null,
+"fecha_terminado_real": string | null,
+"id": number,
+"instrucciones": string | null,
+"joyero_id": number,
+"notas_joyero": string | null,
+"orden_id": number,
+"pagada": boolean
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "asignaciones"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_vencer_cotizaciones":
 { Args: Record<PropertyKey, never>; Returns: number
                            }
           }
           Enums: {
-            "categoria_trabajo": "reparacion"|"creacion","estado_cotizacion": "borrador"|"enviada"|"aprobada"|"rechazada"|"vencida"|"reemplazada","estado_orden": "recibida"|"cotizada"|"aprobada"|"asignada"|"en_proceso"|"terminada_joyero"|"en_control_calidad"|"lista_entrega"|"entregada"|"rechazada"|"anulada","momento_foto": "entrada"|"proceso"|"salida"|"diseno","rol_usuario": "admin"|"taller"|"joyero"|"gerencia"
+            "categoria_trabajo": "reparacion"|"creacion","estado_asignacion": "asignada"|"en_proceso"|"terminada"|"rechazada_calidad"|"cerrada"|"anulada","estado_cotizacion": "borrador"|"enviada"|"aprobada"|"rechazada"|"vencida"|"reemplazada","estado_orden": "recibida"|"cotizada"|"aprobada"|"asignada"|"en_proceso"|"terminada_joyero"|"en_control_calidad"|"lista_entrega"|"entregada"|"rechazada"|"anulada","forma_pago": "efectivo"|"tarjeta"|"transferencia"|"otro","momento_foto": "entrada"|"proceso"|"salida"|"diseno","resultado_calidad": "aprobado"|"rechazado","rol_usuario": "admin"|"taller"|"joyero"|"gerencia","tipo_pago": "anticipo"|"saldo"|"total"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -908,7 +1330,7 @@ export type CompositeTypes<
 export const Constants = {
   "joyeria": {
           Enums: {
-            "categoria_trabajo": ["reparacion", "creacion"],"estado_cotizacion": ["borrador", "enviada", "aprobada", "rechazada", "vencida", "reemplazada"],"estado_orden": ["recibida", "cotizada", "aprobada", "asignada", "en_proceso", "terminada_joyero", "en_control_calidad", "lista_entrega", "entregada", "rechazada", "anulada"],"momento_foto": ["entrada", "proceso", "salida", "diseno"],"rol_usuario": ["admin", "taller", "joyero", "gerencia"]
+            "categoria_trabajo": ["reparacion", "creacion"],"estado_asignacion": ["asignada", "en_proceso", "terminada", "rechazada_calidad", "cerrada", "anulada"],"estado_cotizacion": ["borrador", "enviada", "aprobada", "rechazada", "vencida", "reemplazada"],"estado_orden": ["recibida", "cotizada", "aprobada", "asignada", "en_proceso", "terminada_joyero", "en_control_calidad", "lista_entrega", "entregada", "rechazada", "anulada"],"forma_pago": ["efectivo", "tarjeta", "transferencia", "otro"],"momento_foto": ["entrada", "proceso", "salida", "diseno"],"resultado_calidad": ["aprobado", "rechazado"],"rol_usuario": ["admin", "taller", "joyero", "gerencia"],"tipo_pago": ["anticipo", "saldo", "total"]
           }
         }
 } as const

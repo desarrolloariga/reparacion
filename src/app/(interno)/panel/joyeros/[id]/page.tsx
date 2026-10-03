@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Aviso } from "@/components/ui/aviso";
@@ -11,6 +12,7 @@ import { alternarJoyero, desactivarTarifa } from "@/lib/acciones/joyeros";
 import { requerirLectura, soloLectura } from "@/lib/auth/guardas";
 import { listarComplejidades, listarEspecialidades, listarTiposTrabajo } from "@/lib/datos/catalogos";
 import { joyeroPorId } from "@/lib/datos/joyeros";
+import { asignacionesDeJoyero } from "@/lib/datos/taller";
 import { usuariosJoyeroDisponibles } from "@/lib/datos/usuarios";
 import { fecha, moneda } from "@/lib/format";
 import { hoyISO } from "@/lib/reparaciones/dias-habiles";
@@ -36,6 +38,7 @@ export default async function PaginaJoyero({
   if (!joyero) notFound();
 
   const lectura = soloLectura(sesion);
+  const historialAsignaciones = await asignacionesDeJoyero(joyero.id, 30);
   const [especialidades, cuentas, tipos, complejidades, q] = await Promise.all([
     listarEspecialidades(true),
     usuariosJoyeroDisponibles(joyero.id),
@@ -144,6 +147,32 @@ export default async function PaginaJoyero({
             />
           </Tarjeta>
         ) : null}
+
+        <Tarjeta className="overflow-hidden">
+          <TarjetaEncabezado titulo="Trabajos asignados">
+            <span className="text-ink/45 text-[12px]">{historialAsignaciones.filter((a) => a.estado === "asignada" || a.estado === "en_proceso").length} activos · capacidad {joyero.capacidad_maxima}</span>
+          </TarjetaEncabezado>
+          {historialAsignaciones.length === 0 ? (
+            <p className="text-ink/45 m-0 px-5 py-6 text-[12.5px]">Todavía no tiene trabajos asignados.</p>
+          ) : (
+            <ul className="m-0 list-none divide-y divide-ink/6 p-0">
+              {historialAsignaciones.map((a) => (
+                <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-[12.5px]">
+                  <span className="flex min-w-0 flex-col">
+                    <Link href={`/panel/ordenes/${a.orden_id}`} className="hover:text-gold-dark font-mono text-[12px] font-medium">{a.numero}</Link>
+                    <span className="text-ink/60 truncate">{a.descripcion_pieza}</span>
+                  </span>
+                  <span className="flex items-center gap-2">
+                    {a.es_retrabajo ? <Chip tono="error">Retrabajo</Chip> : null}
+                    <Chip tono={a.estado === "terminada" || a.estado === "cerrada" ? "exito" : a.estado === "rechazada_calidad" ? "error" : a.estado === "anulada" ? "tenue" : "oro"}>{a.estado.replace("_", " ")}</Chip>
+                    {!lectura ? <span className="tabular-nums">{moneda(Number(a.costo_pactado))}</span> : null}
+                    <span className="text-ink/45 tabular-nums">{fecha(a.fecha_compromiso + "T12:00:00")}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Tarjeta>
 
         {historial.length > 0 ? (
           <Tarjeta className="overflow-hidden">
