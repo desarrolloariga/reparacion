@@ -29,6 +29,7 @@ El proyecto de Supabase es compartido con el ERP (`public`) y Smart Vale (`smart
 | `npm run db:new nombre` | Crea un archivo de migración vacío |
 | `npm run db:bundle` | Une las migraciones en `supabase/aplicar.sql` (respaldo manual) |
 | `npm run usuarios:crear -- --nombre "…" --correo … --rol admin\|taller\|joyero\|gerencia [--clave …]` | Alta de cuentas desde la terminal |
+| `npm run storage:preparar` | Crea el bucket privado `reparaciones` para fotografías y diseños |
 
 `SUPABASE_DB_URL` es la cadena del *session pooler* (Dashboard → Connect → Session pooler, IPv4). Solo la usan los scripts locales; **no va en Vercel**.
 
@@ -39,13 +40,15 @@ El proyecto de Supabase es compartido con el ERP (`public`) y Smart Vale (`smart
 | `npm test` | Unitarias (vitest): días hábiles, semáforo, parámetros… |
 | `npm run check` | TypeScript + ESLint |
 | `npm run test:fase1` | Contra la base real: semillas, restricciones, hash de contraseñas (limpia lo que crea) |
+| `npm run test:fase2` | Contra la base real: numeración, máquina de estados, cotizaciones versionadas y aprobación (limpia lo que crea) |
 | `npm run test:humo` | Con el servidor corriendo: cada página por rol, códigos HTTP y redirecciones |
 
 ## Vercel
 
 1. Importar el repositorio de GitHub (framework Next.js, se detecta solo).
-2. Variables de entorno (Production y Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (marcar **Sensitive**), `NEXT_PUBLIC_SITE_URL` (dominio real). Las fases siguientes añaden `CRON_SECRET` y las del proveedor de correo.
-3. Cada push a `main` despliega a producción; cada rama/PR crea un preview.
+2. Variables de entorno (Production y Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (marcar **Sensitive**), `NEXT_PUBLIC_SITE_URL` (dominio real), `CRON_SECRET` (largo y aleatorio; Vercel Cron lo manda en `Authorization: Bearer …`), `SUPABASE_STORAGE_BUCKET=reparaciones`. La Fase 3 añade las del proveedor de correo.
+3. Los jobs programados están en `vercel.json` (`crons`): vencimiento diario de cotizaciones y limpieza semanal de fotos temporales.
+4. Cada push a `main` despliega a producción; cada rama/PR crea un preview.
 
 ## Estructura
 
@@ -54,7 +57,9 @@ src/
   app/
     login/                     acceso
     (interno)/panel/           todo lo que exige sesión (layout con requerirSesion)
+      ordenes/ (lista, nueva recepción, ficha con pestañas, cotizador)  clientes/
       joyeros/  catalogos/  usuarios/  cuenta/  mis-trabajos/
+    api/                       archivos (subida y lectura firmada), PDF de recepción y cotización, cron
     globals.css                tokens de la marca (@theme de Tailwind v4)
   components/
     layout/                    barra lateral, cabecera, barra móvil, shell
@@ -63,7 +68,9 @@ src/
     auth/                      sesiones, guardas, contraseñas
     acciones/                  Server Actions ("use server"), una guarda al inicio de cada una
     datos/                     lecturas (server-only), una función por consulta
-    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros…
+    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros, estados, tiempos, cotizaciones
+    pdf/                       documentos con @react-pdf/renderer
+    storage.ts                 bucket privado: rutas, subida, URL firmada
     supabase/                  cliente de servidor, esquema, tipos generados, alias (modelo.ts)
     navegacion.ts              menú por rol: única fuente de verdad del sidebar y la cabecera
     validacion.ts              helpers de zod y FormData para las acciones

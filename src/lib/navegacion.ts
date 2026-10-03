@@ -49,6 +49,16 @@ export const NAVEGACION: GrupoNav[] = [
     soloRoles: OPERACION,
     items: [
       { nombre: "Inicio", href: "/panel", titulo: "Resumen", icono: "inicio", destacado: true },
+      { nombre: "Órdenes", href: "/panel/ordenes", icono: "ordenes", destacado: true },
+      {
+        nombre: "Nueva recepción",
+        href: "/panel/ordenes/nueva",
+        titulo: "Recibir una pieza",
+        icono: "recepcion",
+        destacado: true,
+        soloRoles: ["admin", "taller"],
+      },
+      { nombre: "Clientes", href: "/panel/clientes", icono: "clientes" },
     ],
   },
   {

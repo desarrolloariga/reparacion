@@ -20,9 +20,12 @@
     "db:sql": "node --env-file=.env.local scripts/sql.mjs",
     "usuarios:crear": "node --env-file=.env.local scripts/crear-usuario.mjs",
     "test:fase1": "node --env-file=.env.local scripts/probar-fase-1.mjs",
-    "test:humo": "node --env-file=.env.local scripts/humo.mjs"
+    "test:fase2": "node --env-file=.env.local scripts/probar-fase-2.mjs",
+    "test:humo": "node --env-file=.env.local scripts/humo.mjs",
+    "storage:preparar": "node --env-file=.env.local scripts/preparar-storage.mjs"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.9.0",
     "@supabase/supabase-js": "^2.112.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
@@ -31,6 +34,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },
