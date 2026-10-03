@@ -64,6 +64,20 @@ export const NAVEGACION: GrupoNav[] = [
     ],
   },
   {
+    etiqueta: "DINERO",
+    soloRoles: ["admin", "taller", "gerencia"],
+    items: [
+      { nombre: "Liquidaciones", href: "/panel/liquidaciones", titulo: "Liquidaciones a joyeros", icono: "liquidaciones" },
+    ],
+  },
+  {
+    etiqueta: "GERENCIA",
+    soloRoles: ["admin", "gerencia"],
+    items: [
+      { nombre: "Tablero gerencial", href: "/panel/gerencia", icono: "gerencia", destacado: true },
+    ],
+  },
+  {
     etiqueta: "MIS TRABAJOS",
     soloRoles: ["joyero"],
     items: [

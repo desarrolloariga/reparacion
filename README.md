@@ -42,6 +42,7 @@ El proyecto de Supabase es compartido con el ERP (`public`) y Smart Vale (`smart
 | `npm run test:fase1` | Contra la base real: semillas, restricciones, hash de contraseñas (limpia lo que crea) |
 | `npm run test:fase2` | Contra la base real: numeración, máquina de estados, cotizaciones versionadas y aprobación (limpia lo que crea) |
 | `npm run test:fase3` | Contra la base real: asignación, portal del joyero, calidad y retrabajo, entrega, garantía, desempeño (limpia lo que crea) |
+| `npm run test:fase4` | Contra la base real: liquidaciones (unicidad, descuentos de garantía), economía por orden y joyero, cliente 360 (limpia lo que crea) |
 | `npm run test:humo` | Con el servidor corriendo: cada página por rol, códigos HTTP y redirecciones |
 
 ## Vercel
@@ -60,17 +61,19 @@ src/
     (interno)/panel/           todo lo que exige sesión (layout con requerirSesion)
       ordenes/ (lista, nueva recepción, ficha con pestañas, cotizador)  clientes/
       alertas/  tablero/ (kanban)  notificaciones/  mis-trabajos/ (portal del joyero)
+      liquidaciones/  gerencia/ (tablero gerencial)
       joyeros/ (con desempeño)  catalogos/  usuarios/  cuenta/
     api/                       archivos (subida y lectura firmada), PDF de recepción y cotización, cron
     globals.css                tokens de la marca (@theme de Tailwind v4)
   components/
-    layout/                    barra lateral, cabecera, barra móvil, shell
+    layout/                    barra lateral, cabecera, barra móvil, shell, campana
+    graficas/                  barras y serie de tiempo en SVG (sin librería)
     ui/                        Boton, Campo, Selector, Area, Casilla, Tarjeta, Chip, Aviso, Tabla, Vacio, Paginacion…
   lib/
     auth/                      sesiones, guardas, contraseñas
     acciones/                  Server Actions ("use server"), una guarda al inicio de cada una
     datos/                     lecturas (server-only), una función por consulta
-    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros, estados, tiempos, cotizaciones, asignación
+    reparaciones/              lógica pura con pruebas: días hábiles, semáforo, parámetros, estados, tiempos, cotizaciones, asignación, dinero, períodos
     notificaciones/            en plataforma + cola de correo con adaptador (consola / Resend)
     pdf/                       documentos con @react-pdf/renderer
     storage.ts                 bucket privado: rutas, subida, URL firmada

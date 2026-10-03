@@ -10,6 +10,8 @@ import { Tarjeta, TarjetaEncabezado } from "@/components/ui/tarjeta";
 import { Vacio } from "@/components/ui/vacio";
 import { requerirLectura, soloLectura } from "@/lib/auth/guardas";
 import { listarClientes, POR_PAGINA_CLIENTES } from "@/lib/datos/clientes";
+import { clientes360 } from "@/lib/datos/indicadores";
+import { moneda } from "@/lib/format";
 import { constructorDeEnlaces, leerTexto, paginar, type Parametros } from "@/lib/url";
 
 import { FormularioCliente } from "./formulario";
@@ -27,9 +29,45 @@ export default async function PaginaClientes({ searchParams }: { searchParams: P
   const { filas, total } = await listarClientes({ busqueda: q, soloActivos, pagina, porPagina });
   const enlace = constructorDeEnlaces("/panel/clientes", { q, inactivos: soloActivos ? undefined : "1", pagina, porPagina });
   const puedeEditar = !soloLectura(sesion);
+  const vista = leerTexto(params, "vista");
+  const ranking = vista === "valor" || vista === "utilidad" ? await clientes360(vista === "utilidad" ? "utilidad" : "facturado", 50) : null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+      <div className="flex flex-col gap-5">
+      {ranking ? (
+        <Tarjeta className="overflow-hidden">
+          <TarjetaEncabezado titulo={vista === "utilidad" ? "Clientes por utilidad generada" : "Clientes de mayor valor"}>
+            <span className="flex items-center gap-3 text-[12px]">
+              <Link href="/panel/clientes?vista=valor" className={vista === "valor" ? "font-semibold" : "text-ink/45 hover:text-gold-dark"}>Por facturación</Link>
+              {sesion.rol !== "taller" ? <Link href="/panel/clientes?vista=utilidad" className={vista === "utilidad" ? "font-semibold" : "text-ink/45 hover:text-gold-dark"}>Por utilidad</Link> : null}
+              <Link href="/panel/clientes" className="text-ink/45 hover:text-gold-dark">Directorio</Link>
+            </span>
+          </TarjetaEncabezado>
+          <Tabla minAncho={640}>
+            <Thead>
+              <Th>#</Th>
+              <Th>Cliente</Th>
+              <Th className="text-right">Órdenes</Th>
+              <Th className="text-right">Facturado</Th>
+              {sesion.rol !== "taller" ? <Th className="text-right">Utilidad</Th> : null}
+              <Th className="text-right">Último servicio</Th>
+            </Thead>
+            <Tbody>
+              {ranking.map((c, i) => (
+                <Tr key={c.id}>
+                  <Td className="text-ink/45 tabular-nums">{i + 1}</Td>
+                  <Td><Link href={`/panel/clientes/${c.id}`} className="hover:text-gold-dark font-medium">{c.nombre}</Link>{c.es_recurrente ? <span className="text-gold-dark ml-2 text-[10px] uppercase">recurrente</span> : null}</Td>
+                  <Td className="text-right tabular-nums">{c.total_ordenes}</Td>
+                  <Td className="text-right tabular-nums">{moneda(c.total_facturado)}</Td>
+                  {sesion.rol !== "taller" ? <Td className="text-right tabular-nums">{moneda(c.utilidad_generada)}</Td> : null}
+                  <Td className="text-right tabular-nums">{c.dias_desde_ultimo_servicio !== null ? `hace ${c.dias_desde_ultimo_servicio} d` : "—"}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Tabla>
+        </Tarjeta>
+      ) : null}
       <Tarjeta className="overflow-hidden">
         <TarjetaEncabezado titulo="Clientes">
           <form method="get" className="flex items-center gap-2">
@@ -72,12 +110,14 @@ export default async function PaginaClientes({ searchParams }: { searchParams: P
         )}
 
         <Paginacion pagina={pagina} paginas={paginas} total={total} porPagina={porPagina} opcionesPorPagina={POR_PAGINA_CLIENTES} enlace={enlace} />
-        <div className="border-ink/6 border-t px-5 py-2 text-[11px]">
+        <div className="border-ink/6 flex flex-wrap gap-4 border-t px-5 py-2 text-[11px]">
           <Link href={enlace({ inactivos: soloActivos ? "1" : undefined, pagina: 1 })} className="text-ink/45 hover:text-gold-dark">
             {soloActivos ? "Mostrar también inactivos" : "Solo activos"}
           </Link>
+          {!ranking ? <Link href="/panel/clientes?vista=valor" className="text-ink/45 hover:text-gold-dark">Ranking de mayor valor</Link> : null}
         </div>
       </Tarjeta>
+      </div>
 
       {puedeEditar ? (
         <aside className="flex flex-col gap-4">

@@ -14,11 +14,13 @@ import { Vacio } from "@/components/ui/vacio";
 import { alternarCliente } from "@/lib/acciones/clientes";
 import { requerirLectura, soloLectura } from "@/lib/auth/guardas";
 import { clientePorId } from "@/lib/datos/clientes";
+import { cliente360 } from "@/lib/datos/indicadores";
 import { ordenesDeCliente } from "@/lib/datos/ordenes";
 import { evaluarSemaforos } from "@/lib/datos/semaforo";
 import { fecha, moneda } from "@/lib/format";
 
 import { FormularioCliente } from "../formulario";
+import { Ficha360 } from "./ficha-360";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -34,7 +36,7 @@ export default async function PaginaCliente({
   const id = Number(idCrudo);
   if (!Number.isInteger(id) || id <= 0) notFound();
 
-  const [cliente, ordenes, q] = await Promise.all([clientePorId(id), ordenesDeCliente(id), searchParams]);
+  const [cliente, ordenes, q, c360] = await Promise.all([clientePorId(id), ordenesDeCliente(id), searchParams, cliente360(id)]);
   if (!cliente) notFound();
   const semaforos = await evaluarSemaforos(ordenes);
   const lectura = soloLectura(sesion);
@@ -43,6 +45,8 @@ export default async function PaginaCliente({
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <div className="flex flex-col gap-5">
         {q.creado === "1" ? <Aviso tono="ok">Cliente creado.</Aviso> : null}
+
+        {c360 ? <Ficha360 c={c360} conDinero={sesion.rol !== "taller"} /> : null}
 
         <Tarjeta className="overflow-hidden">
           <TarjetaEncabezado titulo={`Órdenes de ${cliente.nombre}`}>

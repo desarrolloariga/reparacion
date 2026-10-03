@@ -38,6 +38,12 @@ isOneToOne: false
       foreignKeyName: "asignaciones_orden_id_fkey"
       columns: ["orden_id"]
 isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
       referencedRelation: "vw_ordenes_tablero"
       referencedColumns: ["id"]
     }
@@ -127,6 +133,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "control_calidad_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "control_calidad_orden_id_fkey"
@@ -226,6 +238,12 @@ isOneToOne: false
       foreignKeyName: "cotizaciones_orden_id_fkey"
       columns: ["orden_id"]
 isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cotizaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
       referencedRelation: "vw_ordenes_tablero"
       referencedColumns: ["id"]
     }
@@ -252,6 +270,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "disenos_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "disenos_orden_id_fkey"
@@ -290,6 +314,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fotografias_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "fotografias_orden_id_fkey"
@@ -355,6 +385,74 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"liquidacion_detalle": {
+                  Row: {
+                    "asignacion_id": number,"concepto": string | null,"creado_en": string,"es_descuento": boolean,"id": number,"liquidacion_id": number,"monto": number
+                  }
+                  Insert: {
+                    "asignacion_id": number,"concepto"?: string | null,"creado_en"?: string,"es_descuento"?: boolean,"id"?: never,"liquidacion_id": number,"monto": number
+                  }
+                  Update: {
+                    "asignacion_id"?: number,"concepto"?: string | null,"creado_en"?: string,"es_descuento"?: boolean,"id"?: never,"liquidacion_id"?: number,"monto"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "liquidacion_detalle_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "asignaciones"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "liquidacion_detalle_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["asignacion_id"]
+    },{
+      foreignKeyName: "liquidacion_detalle_asignacion_id_fkey"
+      columns: ["asignacion_id"]
+isOneToOne: false
+      referencedRelation: "vw_trabajos_joyero"
+      referencedColumns: ["asignacion_id"]
+    },{
+      foreignKeyName: "liquidacion_detalle_liquidacion_id_fkey"
+      columns: ["liquidacion_id"]
+isOneToOne: false
+      referencedRelation: "liquidaciones_joyero"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"liquidaciones_joyero": {
+                  Row: {
+                    "actualizado_en": string | null,"creado_en": string,"creado_por": number | null,"estado": string,"fecha_pago": string | null,"forma_pago": Database["joyeria"]['Enums']["forma_pago"] | null,"id": number,"joyero_id": number,"notas": string | null,"pagada_por": number | null,"periodo_desde": string,"periodo_hasta": string,"referencia": string | null,"total": number
+                  }
+                  Insert: {
+                    "actualizado_en"?: string | null,"creado_en"?: string,"creado_por"?: number | null,"estado"?: string,"fecha_pago"?: string | null,"forma_pago"?: Database["joyeria"]['Enums']["forma_pago"] | null,"id"?: never,"joyero_id": number,"notas"?: string | null,"pagada_por"?: number | null,"periodo_desde": string,"periodo_hasta": string,"referencia"?: string | null,"total"?: number
+                  }
+                  Update: {
+                    "actualizado_en"?: string | null,"creado_en"?: string,"creado_por"?: number | null,"estado"?: string,"fecha_pago"?: string | null,"forma_pago"?: Database["joyeria"]['Enums']["forma_pago"] | null,"id"?: never,"joyero_id"?: number,"notas"?: string | null,"pagada_por"?: number | null,"periodo_desde"?: string,"periodo_hasta"?: string,"referencia"?: string | null,"total"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "liquidaciones_joyero_creado_por_fkey"
+      columns: ["creado_por"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "liquidaciones_joyero_joyero_id_fkey"
+      columns: ["joyero_id"]
+isOneToOne: false
+      referencedRelation: "joyeros"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "liquidaciones_joyero_pagada_por_fkey"
+      columns: ["pagada_por"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"notificaciones": {
                   Row: {
                     "creado_en": string,"cuerpo": string | null,"enlace": string | null,"id": number,"leida_en": string | null,"tipo": string,"titulo": string,"usuario_id": number
@@ -401,6 +499,12 @@ isOneToOne: false
       foreignKeyName: "orden_detalle_orden_id_fkey"
       columns: ["orden_id"]
 isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "orden_detalle_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
       referencedRelation: "vw_ordenes_tablero"
       referencedColumns: ["id"]
     },{
@@ -427,6 +531,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "orden_estados_historial_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "orden_estados_historial_orden_id_fkey"
@@ -460,6 +570,12 @@ isOneToOne: false
       referencedRelation: "clientes"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "ordenes_cliente_id_fkey"
+      columns: ["cliente_id"]
+isOneToOne: false
+      referencedRelation: "vw_cliente_360"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "ordenes_creado_por_fkey"
       columns: ["creado_por"]
 isOneToOne: false
@@ -476,6 +592,12 @@ isOneToOne: false
       columns: ["orden_origen_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_orden_origen_id_fkey"
+      columns: ["orden_origen_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "ordenes_orden_origen_id_fkey"
@@ -501,6 +623,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pagos_cliente_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "pagos_cliente_orden_id_fkey"
@@ -664,7 +792,57 @@ isOneToOne: false
                 }
           }
           Views: {
-            "vw_ordenes_tablero": {
+            "vw_cliente_360": {
+                  Row: {
+                    "activo": boolean | null,"correo": string | null,"dias_desde_ultimo_servicio": number | null,"es_recurrente": boolean | null,"fecha_primer_servicio": string | null,"fecha_ultimo_servicio": string | null,"frecuencia_promedio_dias": number | null,"garantias": number | null,"id": number | null,"inactivo": boolean | null,"nombre": string | null,"ordenes_activas": number | null,"precio_maximo": number | null,"precio_minimo": number | null,"telefono": string | null,"ticket_promedio": number | null,"tipo_trabajo_mas_frecuente": string | null,"total_facturado": number | null,"total_ordenes": number | null,"utilidad_generada": number | null,"utilidad_promedio": number | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"vw_ordenes_economia": {
+                  Row: {
+                    "cliente": string | null,"cliente_id": number | null,"cobrado": number | null,"costo": number | null,"entregada_a_tiempo": boolean | null,"es_garantia": boolean | null,"estado": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_entrega_real": string | null,"fecha_prometida_cliente": string | null,"fecha_recepcion": string | null,"id": number | null,"joyero": string | null,"joyero_id": number | null,"margen": number | null,"numero": string | null,"orden_origen_id": number | null,"precio_cliente": number | null,"saldo": number | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"utilidad": number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "asignaciones_joyero_id_fkey"
+      columns: ["joyero_id"]
+isOneToOne: false
+      referencedRelation: "joyeros"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_cliente_id_fkey"
+      columns: ["cliente_id"]
+isOneToOne: false
+      referencedRelation: "clientes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_cliente_id_fkey"
+      columns: ["cliente_id"]
+isOneToOne: false
+      referencedRelation: "vw_cliente_360"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_orden_origen_id_fkey"
+      columns: ["orden_origen_id"]
+isOneToOne: false
+      referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_orden_origen_id_fkey"
+      columns: ["orden_origen_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_orden_origen_id_fkey"
+      columns: ["orden_origen_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_tablero"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"vw_ordenes_tablero": {
                   Row: {
                     "actualizado_en": string | null,"asignacion_estado": Database["joyeria"]['Enums']["estado_asignacion"] | null,"asignacion_id": number | null,"cliente": string | null,"cliente_id": number | null,"cliente_telefono": string | null,"cobrado": number | null,"cotizacion_estado": Database["joyeria"]['Enums']["estado_cotizacion"] | null,"cotizacion_valido_hasta": string | null,"cotizacion_version": number | null,"creado_en": string | null,"creado_por": number | null,"descripcion_pieza": string | null,"dias_estimados": number | null,"es_garantia": boolean | null,"es_retrabajo": boolean | null,"estado": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_compromiso_joyero": string | null,"fecha_control": string | null,"fecha_entrega_real": string | null,"fecha_estimada_entrega": string | null,"fecha_prometida_cliente": string | null,"fecha_prometida_manual": boolean | null,"fecha_recepcion": string | null,"fotografias": number | null,"id": number | null,"joyero": string | null,"joyero_id": number | null,"lineas": number | null,"material": string | null,"numero": string | null,"orden_origen_id": number | null,"precio_cliente": number | null,"saldo": number | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"trabajos": string | null
                   }
@@ -682,6 +860,12 @@ isOneToOne: false
       referencedRelation: "clientes"
       referencedColumns: ["id"]
     },{
+      foreignKeyName: "ordenes_cliente_id_fkey"
+      columns: ["cliente_id"]
+isOneToOne: false
+      referencedRelation: "vw_cliente_360"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "ordenes_creado_por_fkey"
       columns: ["creado_por"]
 isOneToOne: false
@@ -692,6 +876,12 @@ isOneToOne: false
       columns: ["orden_origen_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "ordenes_orden_origen_id_fkey"
+      columns: ["orden_origen_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "ordenes_orden_origen_id_fkey"
@@ -717,6 +907,12 @@ isOneToOne: false
       columns: ["orden_id"]
 isOneToOne: false
       referencedRelation: "ordenes"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "asignaciones_orden_id_fkey"
+      columns: ["orden_id"]
+isOneToOne: false
+      referencedRelation: "vw_ordenes_economia"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "asignaciones_orden_id_fkey"
@@ -769,6 +965,9 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_anular_liquidacion":
+{ Args: { "p_liquidacion_id": number }; Returns: undefined
+                           },
 "fn_aprobar_cotizacion":
 { Args: { "p_aprobada_por_nombre": string,"p_cotizacion_id": number,"p_dias_estimados": number,"p_fecha_estimada": string,"p_fecha_prometida": string,"p_lineas": Json,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -876,6 +1075,29 @@ isOneToOne: false
               "a_tiempo": number,"activas": number,"joyero_id": number,"retrabajos": number,"terminadas": number
             }[]
                            },
+"fn_confirmar_liquidacion":
+{ Args: { "p_fecha_pago": string,"p_forma_pago": Database["joyeria"]['Enums']["forma_pago"],"p_liquidacion_id": number,"p_referencia": string,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"creado_en": string,
+"creado_por": number | null,
+"estado": string,
+"fecha_pago": string | null,
+"forma_pago": Database["joyeria"]['Enums']["forma_pago"] | null,
+"id": number,
+"joyero_id": number,
+"notas": string | null,
+"pagada_por": number | null,
+"periodo_desde": string,
+"periodo_hasta": string,
+"referencia": string | null,
+"total": number
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "liquidaciones_joyero"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_crear_garantia":
 { Args: { "p_cobra": boolean,"p_descripcion_pieza": string,"p_dias_estimados": number,"p_fecha_estimada": string,"p_fecha_prometida": string,"p_joyero_responsable_id": number,"p_lineas": Json,"p_observaciones": string,"p_orden_origen_id": number,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -955,6 +1177,21 @@ isOneToOne: false
               "activo": boolean,"asignados": number,"atrasados": number,"costo_total": number,"cumplimiento_pct": number,"dias_promedio_respuesta": number,"en_proceso": number,"joyero": string,"joyero_id": number,"pendiente_pago": number,"retrabajo_pct": number,"terminados": number
             }[]
                            },
+"fn_economia_por_joyero":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "costo": number,"ingreso": number,"joyero": string,"joyero_id": number,"margen": number,"ordenes": number,"utilidad": number
+            }[]
+                           },
+"fn_economia_por_tipo":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "categoria": Database["joyeria"]['Enums']["categoria_trabajo"],"costo_estimado": number,"ingreso": number,"lineas": number,"margen": number,"tipo_trabajo": string,"tipo_trabajo_id": number,"utilidad": number
+            }[]
+                           },
+"fn_economia_resumen":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "cobrado_en_periodo": number,"costo": number,"costo_garantias": number,"garantias": number,"ingreso": number,"margen": number,"ordenes": number,"pendiente_pago_joyeros": number,"saldo_pendiente_total": number,"utilidad": number
+            }[]
+                           },
 "fn_entregar_orden":
 { Args: { "p_comentario"?: string,"p_con_saldo": boolean,"p_orden_id": number,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -1018,6 +1255,29 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_generar_liquidacion":
+{ Args: { "p_desde": string,"p_hasta": string,"p_joyero_id": number,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"creado_en": string,
+"creado_por": number | null,
+"estado": string,
+"fecha_pago": string | null,
+"forma_pago": Database["joyeria"]['Enums']["forma_pago"] | null,
+"id": number,
+"joyero_id": number,
+"notas": string | null,
+"pagada_por": number | null,
+"periodo_desde": string,
+"periodo_hasta": string,
+"referencia": string | null,
+"total": number
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "liquidaciones_joyero"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
 "fn_guardar_cotizacion":
 { Args: { "p_cotizacion_id": number,"p_lineas": Json,"p_notas"?: string }; Returns: {
               "actualizado_en": string | null,
@@ -1044,6 +1304,16 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_indicadores_operacion":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "activas": number,"conversion_pct": number,"cotizaciones_aprobadas": number,"cotizaciones_enviadas": number,"desviacion_promedio": number,"dias_promedio_total": number,"entregadas": number,"entregadas_a_tiempo": number,"pct_a_tiempo": number,"recibidas": number
+            }[]
+                           },
+"fn_ingresos_nuevos_vs_recurrentes":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "clientes": number,"ingreso": number,"ordenes": number,"segmento": string,"utilidad": number
+            }[]
+                           },
 "fn_iniciar_trabajo":
 { Args: { "p_asignacion_id": number,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -1100,6 +1370,11 @@ isOneToOne: false
       } },
 "fn_purgar_sesiones":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"fn_ranking_clientes":
+{ Args: { "p_criterio"?: string,"p_desde": string,"p_hasta": string,"p_limite"?: number }; Returns: {
+              "cliente": string,"cliente_id": number,"facturado": number,"ordenes": number,"utilidad": number
+            }[]
                            },
 "fn_recalcular_cotizacion":
 { Args: { "p_cotizacion_id": number }; Returns: undefined
@@ -1181,6 +1456,11 @@ isOneToOne: false
 "fn_siguiente_numero":
 { Args: { "p_prefijo": string }; Returns: string
                            },
+"fn_tasa_recompra":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "clientes_con_servicio": number,"clientes_recurrentes": number,"tasa_recompra_pct": number
+            }[]
+                           },
 "fn_terminar_trabajo":
 { Args: { "p_asignacion_id": number,"p_desviacion_dias": number,"p_dias_reales": number,"p_notas": string,"p_usuario_id": number }; Returns: {
               "actualizado_en": string | null,
@@ -1209,6 +1489,21 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"fn_ticket_promedio":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "ordenes": number,"ticket_promedio": number,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"],"utilidad_promedio": number
+            }[]
+                           },
+"fn_tiempo_por_tipo":
+{ Args: { "p_desde": string,"p_hasta": string }; Returns: {
+              "categoria": Database["joyeria"]['Enums']["categoria_trabajo"],"dias_promedio": number,"ordenes": number,"tipo_trabajo": string,"tipo_trabajo_id": number
+            }[]
+                           },
+"fn_utilidad_mensual":
+{ Args: { "p_meses"?: number }; Returns: {
+              "costo": number,"entregadas": number,"ingreso": number,"mes": string,"utilidad": number
+            }[]
+                           },
 "fn_vencer_cotizaciones":
 { Args: Record<PropertyKey, never>; Returns: number
                            }
