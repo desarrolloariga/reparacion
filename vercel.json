@@ -15,7 +15,7 @@
     },
     {
       "path": "/api/cron/correos",
-      "schedule": "0 * * * *"
+      "schedule": "0 14 * * *"
     },
     {
       "path": "/api/cron/limpiar-temporales",
