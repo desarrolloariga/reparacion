@@ -24,3 +24,12 @@ Cada corrección queda en `joyeria.auditoria_admin` con quién, cuándo, el moti
 - `npm run test:admin`: 15 comprobaciones contra la base (editar orden entregada, inmutabilidad sin la función de admin, auditoría, bloqueos, eliminar y revertir liquidación pagada, eliminar orden con limpieza completa).
 - `npm run test:humo`: Ingresos visible para admin/taller/gerencia; Auditoría solo para admin.
 - Migración: `20261014100000_correcciones_admin.sql`.
+
+## Módulo Historiales (Administración → Historiales)
+
+Punto único para el admin, también enlazado desde el Inicio. Dos vistas:
+
+- **Movimientos**: todos los hechos del taller en una lista (`joyeria.vw_movimientos`): recepciones, cotizaciones enviadas, **ventas** (entregas), **cobros** (entran, +), **costos de joyero** (lo encargado, el equivalente a compras), **pagos a joyeros** (salen, −) y cambios de estado. Filtros: tipo de movimiento (o grupos «solo dinero» / «solo operación»), **vendedor/usuario** que registró, **joyero**, tipo de orden, período y búsqueda por orden, cliente, detalle o referencia. Totales por tipo y neto de caja. Cada fila trae **Editar** y **Eliminar** según su tipo (cobro, orden, asignación, liquidación, historial).
+- **Saldos**: lo que deben los clientes (órdenes con saldo) y lo pendiente de pago a cada joyero.
+
+Esta aplicación no maneja bodegas ni compras de inventario (eso vive en el ERP); el filtro equivalente es por joyero y por usuario.

@@ -21,7 +21,12 @@ import {
   type EstadoAccion,
 } from "@/lib/validacion";
 
-import { mensajeDeBase, revalidarOrden } from "./ordenes-estado";
+import { mensajeDeBase, revalidarOrden as revalidarOrdenBase } from "./ordenes-estado";
+
+function revalidarOrden(ordenId?: number) {
+  revalidarOrdenBase(ordenId);
+  revalidatePath("/panel/historiales");
+}
 
 /**
  * Correcciones del administrador: editar y eliminar registros que el resto
@@ -32,6 +37,12 @@ import { mensajeDeBase, revalidarOrden } from "./ordenes-estado";
 
 function motivoDe(formData: FormData) {
   return texto(formData, "motivo").trim() || null;
+}
+
+/** Destino tras eliminar, si la acción vino de Historiales (solo rutas internas). */
+function volverA(formData: FormData) {
+  const v = texto(formData, "volver_a");
+  return v.startsWith("/panel/") && !v.startsWith("//") ? v : null;
 }
 
 function idDe(formData: FormData, nombre = "id") {
@@ -173,7 +184,7 @@ export async function eliminarOrden(_previo: EstadoAccion, formData: FormData): 
   revalidarOrden();
   revalidatePath("/panel/clientes", "layout");
   revalidatePath("/panel/gerencia");
-  redirect("/panel/ordenes?estado=todas&eliminada=1");
+  redirect(volverA(formData) ?? "/panel/ordenes?estado=todas&eliminada=1");
 }
 
 // ── Asignaciones (costo y fechas del joyero) ─────────────────────────────
@@ -298,7 +309,7 @@ export async function eliminarCliente(_previo: EstadoAccion, formData: FormData)
 
   await registrarAuditoria({ usuarioId: sesion.usuarioId, entidad: "cliente", entidadId: id, accion: "eliminar", referencia: antes.nombre, antes, motivo: motivoDe(formData) });
   revalidatePath("/panel/clientes", "layout");
-  redirect("/panel/clientes?eliminado=1");
+  redirect(volverA(formData) ?? "/panel/clientes?eliminado=1");
 }
 
 /** Corrección de datos del cliente con huella (el taller edita sin auditoría). */
@@ -354,6 +365,7 @@ export async function editarLiquidacion(_previo: EstadoAccion, formData: FormDat
 
   await registrarAuditoria({ usuarioId: sesion.usuarioId, entidad: "liquidacion", entidadId: id, accion: "editar", referencia: `#${id}`, antes, despues, motivo: motivoDe(formData) });
   revalidatePath("/panel/liquidaciones", "layout");
+  revalidatePath("/panel/historiales");
   return { ok: "Liquidación corregida." };
 }
 
@@ -370,5 +382,6 @@ export async function eliminarLiquidacion(_previo: EstadoAccion, formData: FormD
   revalidatePath("/panel/liquidaciones", "layout");
   revalidatePath("/panel/joyeros", "layout");
   revalidatePath("/panel/gerencia");
-  redirect("/panel/liquidaciones?eliminada=1");
+  revalidatePath("/panel/historiales");
+  redirect(volverA(formData) ?? "/panel/liquidaciones?eliminada=1");
 }

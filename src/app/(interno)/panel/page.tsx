@@ -53,6 +53,13 @@ export default async function PaginaPanel() {
         </Tarjeta>
       ) : null}
 
+      {sesion.rol === "admin" ? (
+        <Tarjeta className="border-gold/40 flex flex-wrap items-center justify-between gap-4 px-[22px] py-4">
+          <span className="text-[13px]"><strong>Historiales:</strong> ventas, cobros, costos y pagos a joyeros, saldos y cambios de estado, con filtros y corrección de cada registro.</span>
+          <Link href="/panel/historiales"><Boton tamano="sm">ABRIR HISTORIALES</Boton></Link>
+        </Tarjeta>
+      ) : null}
+
       {faltantes.length > 0 ? (
         <Tarjeta className="border-gold/40 bg-gold/6 flex flex-wrap items-center justify-between gap-4 px-[22px] py-4">
           <span className="text-[13px]">Faltan <strong>{faltantes.length}</strong> combinaciones en la matriz de tiempos estándar: la recepción con esos trabajos se bloquea.</span>

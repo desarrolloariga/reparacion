@@ -92,6 +92,46 @@ try {
   comprobar("se puede volver a liquidar (100)", regen.ok && Number(regen.json?.total) === 100, msg(regen));
   await rpc("fn_anular_liquidacion", { p_liquidacion_id: regen.json.id });
 
+  console.log("\nHistorial unificado (vw_movimientos)");
+  {
+    const liq2 = (await rpc("fn_generar_liquidacion", { p_joyero_id: joyero.id, p_desde: "2026-01-01", p_hasta: hoy, p_usuario_id: usuarioId })).json;
+    await rpc("fn_confirmar_liquidacion", { p_liquidacion_id: liq2.id, p_fecha_pago: hoy, p_forma_pago: "transferencia", p_referencia: "zz-ref", p_usuario_id: usuarioId });
+    const movs = (await get(`vw_movimientos?select=tipo,monto,signo,usuario,registro_id&orden_id=eq.${o.id}`)).json ?? [];
+    const tipos = new Set(movs.map((m) => m.tipo));
+    comprobar("la orden aparece como recepción, cotización, venta, cobro, costo de joyero y cambios de estado", ["recepcion", "cotizacion", "venta", "cobro", "costo_joyero", "estado"].every((t) => tipos.has(t)), [...tipos].join(","));
+    const venta = movs.find((m) => m.tipo === "venta");
+    comprobar("la venta lleva el precio corregido (450) y quién entregó", Number(venta?.monto) === 450 && Boolean(venta?.usuario), JSON.stringify(venta));
+    const cobro = movs.find((m) => m.tipo === "cobro");
+    comprobar("el cobro entra con signo +1", cobro?.signo === 1 && Number(cobro?.monto) === 500);
+    const pago = (await get(`vw_movimientos?select=tipo,monto,signo,joyero&tipo=eq.pago_joyero&registro_id=eq.${liq2.id}`)).json?.[0];
+    comprobar("el pago al joyero sale con signo −1", pago?.signo === -1 && Number(pago?.monto) === 100 && pago?.joyero === "zz-prueba-joyero-admin", JSON.stringify(pago));
+    const porJoyero = (await get(`vw_movimientos?select=tipo&joyero_id=eq.${joyero.id}`)).json ?? [];
+    comprobar("filtrar por joyero trae sus costos, ventas y pagos", ["costo_joyero", "venta", "pago_joyero"].every((t) => porJoyero.some((m) => m.tipo === t)));
+    const porUsuario = (await get(`vw_movimientos?select=tipo&usuario_id=eq.${usuarioId}&orden_id=eq.${o.id}`)).json ?? [];
+    comprobar("filtrar por vendedor/usuario funciona", porUsuario.length > 0);
+
+    // Página real, si el servidor está corriendo.
+    const sitio = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3003";
+    const vivo = await fetch(`${sitio}/login`).then((r) => r.ok).catch(() => false);
+    if (vivo) {
+      const { createHash, randomBytes } = await import("node:crypto");
+      const token = randomBytes(32).toString("base64url");
+      const token_hash = createHash("sha256").update(token).digest("hex");
+      await post("sesiones", { usuario_id: usuarioId, token_hash, expira_en: new Date(Date.now() + 600000).toISOString(), user_agent: "test-admin" });
+      const pedir = (ruta) => fetch(`${sitio}${ruta}`, { headers: { cookie: `ariga_joyeria_sesion=${token}` } }).then(async (r) => ({ status: r.status, html: await r.text() }));
+      const lista = await pedir(`/panel/historiales?tipo=todos&periodo=todo&q=${encodeURIComponent(o.numero)}`);
+      comprobar("la página de Historiales muestra los movimientos de la orden con sus botones de corrección", lista.status === 200 && lista.html.includes(o.numero) && lista.html.includes("Editar orden") && lista.html.includes("Eliminar"), `status ${lista.status}`);
+      const joy = await pedir(`/panel/historiales?tipo=pago_joyero&periodo=todo&joyero=${joyero.id}`);
+      comprobar("filtro por joyero y tipo en la página", joy.status === 200 && joy.html.includes("Pago a joyero") && joy.html.includes("zz-ref"));
+      const saldos = await pedir(`/panel/historiales?vista=saldos`);
+      comprobar("la vista de saldos carga", saldos.status === 200 && saldos.html.includes("POR COBRAR A CLIENTES"));
+      await del(`sesiones?token_hash=eq.${token_hash}`);
+    } else {
+      console.log("  (servidor apagado: se omite la prueba de la página)");
+    }
+    await rpc("fn_admin_eliminar_liquidacion", { p_liquidacion_id: liq2.id, p_usuario_id: usuarioId, p_motivo: "prueba" });
+  }
+
   console.log("\nEliminar orden");
   const gar = (await rpc("fn_crear_garantia", { p_orden_origen_id: o.id, p_cobra: false, p_joyero_responsable_id: joyero.id, p_descripcion_pieza: "zz-prueba-admin-gar", p_observaciones: "", p_lineas: [linea], p_dias_estimados: 2, p_fecha_estimada: "2026-10-20", p_fecha_prometida: "2099-12-31", p_usuario_id: usuarioId })).json;
   const conGar = await rpc("fn_admin_eliminar_orden", { p_orden_id: o.id, p_usuario_id: usuarioId, p_motivo: "prueba" });

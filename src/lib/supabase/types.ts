@@ -818,6 +818,13 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"vw_movimientos": {
+                  Row: {
+                    "categoria": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"cliente": string | null,"cliente_id": number | null,"detalle": string | null,"fecha": string | null,"joyero": string | null,"joyero_id": number | null,"momento": string | null,"monto": number | null,"numero": string | null,"orden_id": number | null,"referencia": string | null,"registro_id": number | null,"signo": number | null,"tipo": string | null,"usuario": string | null,"usuario_id": number | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"vw_ordenes_economia": {
                   Row: {
                     "cliente": string | null,"cliente_id": number | null,"cobrado": number | null,"costo": number | null,"entregada_a_tiempo": boolean | null,"es_garantia": boolean | null,"estado": Database["joyeria"]['Enums']["estado_orden"] | null,"fecha_entrega_real": string | null,"fecha_prometida_cliente": string | null,"fecha_recepcion": string | null,"id": number | null,"joyero": string | null,"joyero_id": number | null,"margen": number | null,"numero": string | null,"orden_origen_id": number | null,"precio_cliente": number | null,"saldo": number | null,"tipo": Database["joyeria"]['Enums']["categoria_trabajo"] | null,"utilidad": number | null

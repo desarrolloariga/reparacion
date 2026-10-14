@@ -19,7 +19,8 @@ export type IconoNav =
   | "alertas"
   | "tablero"
   | "liquidaciones"
-  | "gerencia";
+  | "gerencia"
+  | "historiales";
 
 export type ItemNav = {
   nombre: string;
@@ -108,6 +109,7 @@ export const NAVEGACION: GrupoNav[] = [
     etiqueta: "ADMINISTRACIÓN",
     soloRoles: ADMIN,
     items: [
+      { nombre: "Historiales", href: "/panel/historiales", titulo: "Historiales y correcciones", icono: "historiales" },
       { nombre: "Usuarios", href: "/panel/usuarios", titulo: "Cuentas de acceso", icono: "usuarios" },
       { nombre: "Auditoría", href: "/panel/auditoria", titulo: "Correcciones del administrador" },
     ],

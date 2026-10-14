@@ -8,6 +8,7 @@ import {
   ClipboardList,
   Gem,
   Hammer,
+  History,
   House,
   KanbanSquare,
   PackagePlus,
@@ -37,6 +38,7 @@ export const ICONOS_NAV: Record<IconoNav, LucideIcon> = {
   tablero: KanbanSquare,
   liquidaciones: Receipt,
   gerencia: BarChart3,
+  historiales: History,
 };
 
 export function BarraMovil({ rol }: { rol: RolUsuario }) {
