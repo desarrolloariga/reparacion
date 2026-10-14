@@ -23,6 +23,7 @@ import { hoyISO } from "@/lib/reparaciones/dias-habiles";
 import { esTerminal } from "@/lib/reparaciones/estados";
 
 import { AccionesOrden } from "./acciones-orden";
+import { CorreccionAdmin } from "./correccion-admin";
 import { Pestanas, type Pestana } from "./pestanas";
 import { TabAsignaciones } from "./tab-asignaciones";
 import { TabCalidad } from "./tab-calidad";
@@ -162,13 +163,14 @@ export default async function PaginaOrden({
       />
 
       {tab === "pieza" ? <TabPieza datos={datos} lectura={lectura} /> : null}
+      {tab === "pieza" && sesion.rol === "admin" ? <CorreccionAdmin orden={orden} /> : null}
       {tab === "cotizaciones" ? <TabCotizaciones datos={datos} lectura={lectura} hoy={hoy} /> : null}
       {tab === "disenos" ? <TabDisenos datos={datos} lectura={lectura} /> : null}
-      {tab === "asignaciones" ? <TabAsignaciones datos={datos} asignaciones={asignaciones} lectura={lectura} extra={asignacionExtra} /> : null}
+      {tab === "asignaciones" ? <TabAsignaciones datos={datos} asignaciones={asignaciones} lectura={lectura} extra={asignacionExtra} esAdmin={sesion.rol === "admin"} /> : null}
       {tab === "calidad" ? <TabCalidad datos={datos} controles={controles} asignaciones={asignaciones} lectura={lectura} fotosSalida={fotosSalida} /> : null}
       {tab === "fotos" ? <TabFotos datos={datos} lectura={lectura} /> : null}
       {tab === "pagos" ? <TabPagos datos={datos} pagos={pagos} lectura={lectura} esAdmin={sesion.rol === "admin"} hoy={hoy} /> : null}
-      {tab === "historial" ? <TabHistorial datos={datos} /> : null}
+      {tab === "historial" ? <TabHistorial datos={datos} esAdmin={sesion.rol === "admin"} /> : null}
       {tab === "garantias" ? <TabGarantias datos={datos} asignaciones={asignaciones} lectura={lectura} extra={garantiaExtra} /> : null}
     </div>
   );

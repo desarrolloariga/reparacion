@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 
 import { ChipEstadoOrden, ChipTipoOrden } from "@/components/ordenes/chip-estado";
 import { Semaforo } from "@/components/ordenes/semaforo";
+import { Aviso } from "@/components/ui/aviso";
 import { Boton } from "@/components/ui/boton";
 import { Paginacion } from "@/components/ui/paginacion";
 import { Tabla, Tbody, Td, Th, Thead, Tr } from "@/components/ui/tabla";
@@ -43,6 +44,8 @@ export default async function PaginaOrdenes({ searchParams }: { searchParams: Pr
   const puedeCrear = !soloLectura(sesion);
 
   return (
+    <>
+    {leerTexto(params, "eliminada") === "1" ? <Aviso tono="ok">Orden eliminada. Queda una copia en Auditoría.</Aviso> : null}
     <Tarjeta className="overflow-hidden">
       <TarjetaEncabezado titulo="Órdenes">
         <span className="flex items-center gap-3">
@@ -125,5 +128,6 @@ export default async function PaginaOrdenes({ searchParams }: { searchParams: Pr
 
       <Paginacion pagina={pagina} paginas={paginas} total={total} porPagina={porPagina} opcionesPorPagina={POR_PAGINA_ORDENES} enlace={enlace} />
     </Tarjeta>
+    </>
   );
 }

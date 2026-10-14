@@ -48,6 +48,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"auditoria_admin": {
+                  Row: {
+                    "accion": string,"antes": Json | null,"creado_en": string,"despues": Json | null,"entidad": string,"entidad_id": number,"id": number,"motivo": string | null,"referencia": string | null,"usuario_id": number | null
+                  }
+                  Insert: {
+                    "accion": string,"antes"?: Json | null,"creado_en"?: string,"despues"?: Json | null,"entidad": string,"entidad_id": number,"id"?: never,"motivo"?: string | null,"referencia"?: string | null,"usuario_id"?: number | null
+                  }
+                  Update: {
+                    "accion"?: string,"antes"?: Json | null,"creado_en"?: string,"despues"?: Json | null,"entidad"?: string,"entidad_id"?: number,"id"?: never,"motivo"?: string | null,"referencia"?: string | null,"usuario_id"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "auditoria_admin_usuario_id_fkey"
+      columns: ["usuario_id"]
+isOneToOne: false
+      referencedRelation: "usuarios"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"calendario_laboral": {
                   Row: {
                     "actualizado_en": string | null,"creado_en": string,"creado_por": number | null,"descripcion": string | null,"es_habil": boolean,"fecha": string,"id": number
@@ -925,7 +944,50 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "fn_anotar_orden":
+            "fn_admin_editar_orden":
+{ Args: { "p_cambios": Json,"p_motivo": string,"p_orden_id": number,"p_usuario_id": number }; Returns: {
+              "actualizado_en": string | null,
+"cliente_id": number,
+"cobra_garantia": boolean,
+"creado_en": string,
+"creado_por": number | null,
+"descripcion_pieza": string,
+"dias_estimados": number | null,
+"entregada_con_saldo": boolean,
+"es_garantia": boolean,
+"estado": Database["joyeria"]['Enums']["estado_orden"],
+"fecha_entrega_real": string | null,
+"fecha_estimada_entrega": string | null,
+"fecha_prometida_cliente": string | null,
+"fecha_prometida_manual": boolean,
+"fecha_recepcion": string,
+"id": number,
+"joyero_responsable_garantia_id": number | null,
+"material": string | null,
+"motivo_anulacion": string | null,
+"numero": string,
+"observaciones_recepcion": string | null,
+"orden_origen_id": number | null,
+"peso_entrada_g": number | null,
+"peso_salida_g": number | null,
+"piedras": string | null,
+"precio_cliente": number,
+"quilataje": string | null,
+"tipo": Database["joyeria"]['Enums']["categoria_trabajo"]
+            }
+                          SetofOptions: {
+        from: "*"
+        to: "ordenes"
+        isOneToOne: true
+        isSetofReturn: false
+      } },
+"fn_admin_eliminar_liquidacion":
+{ Args: { "p_liquidacion_id": number,"p_motivo": string,"p_usuario_id": number }; Returns: undefined
+                           },
+"fn_admin_eliminar_orden":
+{ Args: { "p_motivo": string,"p_orden_id": number,"p_usuario_id": number }; Returns: (string)[]
+                           },
+"fn_anotar_orden":
 { Args: { "p_comentario": string,"p_orden_id": number,"p_usuario_id": number }; Returns: undefined
                            },
 "fn_anular_asignacion":

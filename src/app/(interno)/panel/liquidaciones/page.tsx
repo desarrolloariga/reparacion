@@ -42,6 +42,7 @@ export default async function PaginaLiquidaciones({ searchParams }: { searchPara
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
       <div className="flex flex-col gap-5">
         {params.anulada === "1" ? <Aviso tono="ok">Borrador anulado: sus trabajos vuelven a estar pendientes de pago.</Aviso> : null}
+        {params.eliminada === "1" ? <Aviso tono="ok">Liquidación eliminada: sus trabajos vuelven a estar pendientes de pago. Queda una copia en Auditoría.</Aviso> : null}
         <Tarjeta className="overflow-hidden">
           <TarjetaEncabezado titulo="Liquidaciones">
             <span className="text-ink/45 text-[12px]">{liquidaciones.length} registradas</span>

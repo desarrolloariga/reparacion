@@ -1,10 +1,12 @@
+import { BotonEliminar, EditorRegistro } from "@/components/admin/controles";
 import { ChipEstadoOrden } from "@/components/ordenes/chip-estado";
+import { editarHistorial, eliminarHistorial } from "@/lib/acciones/admin";
 import { Tarjeta, TarjetaEncabezado } from "@/components/ui/tarjeta";
 import type { OrdenCompleta } from "@/lib/datos/ordenes";
 import { fechaHora } from "@/lib/format";
 import type { EstadoOrden } from "@/lib/reparaciones/estados";
 
-export function TabHistorial({ datos }: { datos: OrdenCompleta }) {
+export function TabHistorial({ datos, esAdmin = false }: { datos: OrdenCompleta; esAdmin?: boolean }) {
   const { historial } = datos;
 
   return (
@@ -33,6 +35,12 @@ export function TabHistorial({ datos }: { datos: OrdenCompleta }) {
                 {h.comentario ? <span className="text-[12.5px]">{h.comentario}</span> : null}
               </span>
               <span className="text-ink/45 text-[11.5px]">{h.usuario ?? "Sistema"}</span>
+              {esAdmin ? (
+                <span className="flex w-full flex-wrap justify-end gap-2">
+                  <EditorRegistro accion={editarHistorial} ocultos={{ id: h.id }} campos={[{ nombre: "comentario", etiqueta: "COMENTARIO", tipo: "area", valor: h.comentario }]} titulo="Corregir comentario" />
+                  <BotonEliminar accion={eliminarHistorial} ocultos={{ id: h.id }} pregunta="¿Eliminar este movimiento del historial?" detalle="El estado actual de la orden no cambia." />
+                </span>
+              ) : null}
             </li>
           );
         })}

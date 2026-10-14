@@ -19,6 +19,9 @@ import { ordenesDeCliente } from "@/lib/datos/ordenes";
 import { evaluarSemaforos } from "@/lib/datos/semaforo";
 import { fecha, moneda } from "@/lib/format";
 
+import { BotonEliminar } from "@/components/admin/controles";
+import { eliminarCliente } from "@/lib/acciones/admin";
+
 import { FormularioCliente } from "../formulario";
 import { Ficha360 } from "./ficha-360";
 
@@ -112,6 +115,18 @@ export default async function PaginaCliente({
         ) : (
           <FormularioCliente inicial={cliente} />
         )}
+        {sesion.rol === "admin" ? (
+          <div className="border-ink/8 flex flex-col gap-2 border-t pt-4">
+            <span className="text-gold-dark tracking-eyebrow text-[9px] font-medium">SOLO ADMINISTRACIÓN</span>
+            <BotonEliminar
+              accion={eliminarCliente}
+              ocultos={{ id: cliente.id }}
+              etiqueta="Eliminar cliente"
+              pregunta={`¿Eliminar a ${cliente.nombre}?`}
+              detalle={ordenes.length > 0 ? `Tiene ${ordenes.length} órdenes: hay que eliminarlas antes (o desactivar al cliente).` : "Queda una copia en Auditoría."}
+            />
+          </div>
+        ) : null}
       </Tarjeta>
     </div>
   );

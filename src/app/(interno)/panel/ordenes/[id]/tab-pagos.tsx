@@ -1,7 +1,9 @@
 import { Tabla, Tbody, Td, Th, Thead, Tr } from "@/components/ui/tabla";
 import { Tarjeta, TarjetaEncabezado, TarjetaIndicador } from "@/components/ui/tarjeta";
 import { Vacio } from "@/components/ui/vacio";
-import { eliminarPago } from "@/lib/acciones/pagos";
+import { camposPago } from "@/components/admin/campos";
+import { BotonEliminar, EditorRegistro } from "@/components/admin/controles";
+import { editarPago, eliminarPago } from "@/lib/acciones/admin";
 import type { OrdenCompleta } from "@/lib/datos/ordenes";
 import { saldoDe, type Pago } from "@/lib/datos/taller";
 import { fecha, moneda } from "@/lib/format";
@@ -38,7 +40,7 @@ export function TabPagos({ datos, pagos, lectura, esAdmin, hoy }: { datos: Orden
                 <Th>Forma</Th>
                 <Th>Referencia</Th>
                 <Th className="text-right">Monto</Th>
-                {esAdmin && orden.estado !== "entregada" ? <Th /> : null}
+                {esAdmin ? <Th className="text-right">Admin</Th> : null}
               </Thead>
               <Tbody>
                 {pagos.map((p) => (
@@ -48,12 +50,12 @@ export function TabPagos({ datos, pagos, lectura, esAdmin, hoy }: { datos: Orden
                     <Td>{FORMA[p.forma_pago] ?? p.forma_pago}</Td>
                     <Td className="text-ink/60">{p.referencia ?? "—"}<span className="text-ink/40 block text-[10.5px]">{p.registrado ?? ""}</span></Td>
                     <Td className="text-right font-medium tabular-nums">{moneda(Number(p.monto))}</Td>
-                    {esAdmin && orden.estado !== "entregada" ? (
+                    {esAdmin ? (
                       <Td className="text-right">
-                        <form action={eliminarPago}>
-                          <input type="hidden" name="id" value={p.id} />
-                          <button type="submit" className="text-ink/40 hover:text-clay cursor-pointer text-[11px] underline-offset-2 hover:underline">Eliminar</button>
-                        </form>
+                        <span className="inline-flex flex-wrap justify-end gap-2">
+                          <EditorRegistro accion={editarPago} ocultos={{ id: p.id }} campos={camposPago(p)} titulo={`Corregir pago del ${fecha(p.fecha + "T12:00:00")}`} />
+                          <BotonEliminar accion={eliminarPago} ocultos={{ id: p.id }} pregunta={`¿Eliminar el pago de ${moneda(Number(p.monto))}?`} detalle="El saldo de la orden vuelve a subir en ese monto." />
+                        </span>
                       </Td>
                     ) : null}
                   </Tr>

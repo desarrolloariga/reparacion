@@ -5,6 +5,10 @@ import type { AsignacionListada, CandidatoConCosto } from "@/lib/datos/asignacio
 import type { OrdenCompleta } from "@/lib/datos/ordenes";
 import { fecha, moneda } from "@/lib/format";
 
+import { camposAsignacion } from "@/components/admin/campos";
+import { BotonEliminar, EditorRegistro } from "@/components/admin/controles";
+import { editarAsignacion, eliminarAsignacion } from "@/lib/acciones/admin";
+
 import { DialogoAsignar, FormularioAnularAsignacion } from "./dialogo-asignar";
 
 const TONO: Record<string, "neutro" | "oro" | "exito" | "error" | "oscuro" | "tenue"> = {
@@ -29,10 +33,12 @@ export function TabAsignaciones({
   asignaciones,
   lectura,
   extra,
+  esAdmin = false,
 }: {
   datos: OrdenCompleta;
   asignaciones: AsignacionListada[];
   lectura: boolean;
+  esAdmin?: boolean;
   extra: { candidatos: CandidatoConCosto[]; sugerida: string; tope: string | null; bloquearPorCapacidad: boolean; hoy: string } | null;
 }) {
   const { orden } = datos;
@@ -73,6 +79,14 @@ export function TabAsignaciones({
                 {a.instrucciones ? <p className="text-ink/70 m-0 text-[12.5px]">{a.instrucciones}</p> : null}
                 {a.notas_joyero ? <p className="text-ink/60 m-0 text-[12px] italic">Joyero: {a.notas_joyero}</p> : null}
                 {!lectura && a.estado === "asignada" ? <FormularioAnularAsignacion asignacionId={a.id} /> : null}
+                {esAdmin ? (
+                  <span className="flex flex-wrap gap-2">
+                    <EditorRegistro accion={editarAsignacion} ocultos={{ id: a.id }} campos={camposAsignacion(a)} titulo={`Corregir asignación de ${a.joyero}`} />
+                    {!["asignada", "en_proceso", "terminada"].includes(a.estado) ? (
+                      <BotonEliminar accion={eliminarAsignacion} ocultos={{ id: a.id }} pregunta="¿Eliminar esta asignación?" detalle="Su costo deja de contar en la utilidad de la orden y en el desempeño del joyero." />
+                    ) : null}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ul>

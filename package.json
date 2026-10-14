@@ -23,6 +23,7 @@
     "test:fase2": "node --env-file=.env.local scripts/probar-fase-2.mjs",
     "test:fase3": "node --env-file=.env.local scripts/probar-fase-3.mjs",
     "test:fase4": "node --env-file=.env.local scripts/probar-fase-4.mjs",
+    "test:admin": "node --env-file=.env.local scripts/probar-admin.mjs",
     "test:humo": "node --env-file=.env.local scripts/humo.mjs",
     "storage:preparar": "node --env-file=.env.local scripts/preparar-storage.mjs"
   },

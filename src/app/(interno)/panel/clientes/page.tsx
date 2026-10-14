@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
+import { Aviso } from "@/components/ui/aviso";
 import { Boton } from "@/components/ui/boton";
 import { ChipActivo } from "@/components/ui/chip";
 import { Paginacion } from "@/components/ui/paginacion";
@@ -35,6 +36,7 @@ export default async function PaginaClientes({ searchParams }: { searchParams: P
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
       <div className="flex flex-col gap-5">
+      {leerTexto(params, "eliminado") === "1" ? <Aviso tono="ok">Cliente eliminado. Queda una copia en Auditoría.</Aviso> : null}
       {ranking ? (
         <Tarjeta className="overflow-hidden">
           <TarjetaEncabezado titulo={vista === "utilidad" ? "Clientes por utilidad generada" : "Clientes de mayor valor"}>

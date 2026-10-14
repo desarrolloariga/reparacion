@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { requerirAdmin, requerirTaller } from "@/lib/auth/guardas";
+import { requerirTaller } from "@/lib/auth/guardas";
 import { pagosDeOrden, saldoDe } from "@/lib/datos/taller";
 import { FORMAS_PAGO, TIPOS_PAGO } from "@/lib/reparaciones/pagos";
 import { db } from "@/lib/supabase/server";
@@ -49,17 +49,4 @@ export async function registrarPago(_previo: EstadoAccion, formData: FormData): 
 
   revalidarOrden(d.orden_id);
   return { ok: `Pago de ${d.monto.toFixed(2)} registrado.` };
-}
-
-/** Solo administración, y nunca sobre una orden entregada: corrige errores de captura. */
-export async function eliminarPago(formData: FormData) {
-  await requerirAdmin();
-  const id = Number(formData.get("id"));
-  if (!Number.isInteger(id) || id <= 0) return;
-  const { data } = await db().from("pagos_cliente").select("id, orden_id, ordenes(estado)").eq("id", id).maybeSingle();
-  if (!data) return;
-  const o = Array.isArray(data.ordenes) ? data.ordenes[0] : data.ordenes;
-  if (o?.estado === "entregada") return;
-  await db().from("pagos_cliente").delete().eq("id", id);
-  revalidarOrden(data.orden_id);
 }

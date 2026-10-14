@@ -7,6 +7,9 @@ import { Aviso } from "@/components/ui/aviso";
 import { Chip } from "@/components/ui/chip";
 import { Tabla, Tbody, Td, Th, Thead, Tr } from "@/components/ui/tabla";
 import { Tarjeta, TarjetaEncabezado } from "@/components/ui/tarjeta";
+import { camposLiquidacion } from "@/components/admin/campos";
+import { BotonEliminar, EditorRegistro } from "@/components/admin/controles";
+import { editarLiquidacion, eliminarLiquidacion } from "@/lib/acciones/admin";
 import { anularLiquidacion } from "@/lib/acciones/liquidaciones";
 import { requerirLectura, soloLectura } from "@/lib/auth/guardas";
 import { liquidacionPorId } from "@/lib/datos/liquidaciones";
@@ -91,6 +94,21 @@ export default async function PaginaLiquidacion({
           </Tabla>
           <p className="text-ink/45 m-0 px-5 py-3 text-[11px]">Creada {fechaHora(liquidacion.creado_en)}.</p>
         </Tarjeta>
+
+        {sesion.rol === "admin" ? (
+          <Tarjeta className="border-gold/40 flex flex-col gap-3 p-6 lg:col-start-2">
+            <span className="text-gold-dark tracking-eyebrow text-[9px] font-medium">SOLO ADMINISTRACIÓN</span>
+            <EditorRegistro accion={editarLiquidacion} ocultos={{ id: liquidacion.id }} campos={camposLiquidacion(liquidacion)} titulo="Corregir datos del pago" etiqueta="Editar liquidación" />
+            <BotonEliminar
+              accion={eliminarLiquidacion}
+              ocultos={{ id: liquidacion.id }}
+              etiqueta="Eliminar liquidación"
+              pregunta="¿Eliminar esta liquidación?"
+              detalle={liquidacion.estado === "pagada" ? "Está pagada: sus trabajos vuelven a quedar pendientes de pago al joyero. Queda una copia en Auditoría." : "Sus trabajos quedan libres para otra liquidación."}
+              motivoObligatorio
+            />
+          </Tarjeta>
+        ) : null}
 
         {!lectura && liquidacion.estado === "borrador" ? (
           <Tarjeta className="flex flex-col gap-5 p-6">

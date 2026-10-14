@@ -67,6 +67,7 @@ export const NAVEGACION: GrupoNav[] = [
     etiqueta: "DINERO",
     soloRoles: ["admin", "taller", "gerencia"],
     items: [
+      { nombre: "Ingresos", href: "/panel/ingresos", titulo: "Historial de ingresos" },
       { nombre: "Liquidaciones", href: "/panel/liquidaciones", titulo: "Liquidaciones a joyeros", icono: "liquidaciones" },
     ],
   },
@@ -108,6 +109,7 @@ export const NAVEGACION: GrupoNav[] = [
     soloRoles: ADMIN,
     items: [
       { nombre: "Usuarios", href: "/panel/usuarios", titulo: "Cuentas de acceso", icono: "usuarios" },
+      { nombre: "Auditoría", href: "/panel/auditoria", titulo: "Correcciones del administrador" },
     ],
   },
   {
